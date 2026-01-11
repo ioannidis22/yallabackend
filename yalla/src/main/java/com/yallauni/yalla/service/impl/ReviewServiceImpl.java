@@ -32,8 +32,6 @@ public class ReviewServiceImpl implements ReviewService {
         return reviewRepository.save(review);
     }
 
-    }
-
     @Override
     public Optional<Review> findById(Long id) {
         if (id == null)
@@ -60,4 +58,4 @@ public class ReviewServiceImpl implements ReviewService {
     public void deleteReview(Long id) {
         reviewRepository.deleteById(id);
     }
-    }
+}

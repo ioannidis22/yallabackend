@@ -32,8 +32,6 @@ public class RideServiceImpl implements RideService {
         return rideRepository.save(ride);
     }
 
-    }
-
     @Override
     public Optional<Ride> findById(Long id) {
         if (id == null)
@@ -96,8 +94,6 @@ public class RideServiceImpl implements RideService {
             throw new IllegalArgumentException("Ride not found");
         }
     }
-
-    
 
     @Override
     public boolean removePassenger(Long rideId, User passenger) {
