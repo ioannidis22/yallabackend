@@ -36,8 +36,10 @@ public class AuthController {
             Authentication authentication = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(email, password));
             String token = jwtService.generateToken(email);
-            Map<String, String> response = new HashMap<>();
+            User user = userRepository.findByEmailAddress(email).orElse(null);
+            Map<String, Object> response = new HashMap<>();
             response.put("token", token);
+            response.put("user", user);
             return ResponseEntity.ok(response);
         } catch (AuthenticationException e) {
             return ResponseEntity.status(401).body("Invalid credentials");
@@ -51,6 +53,11 @@ public class AuthController {
         }
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         userRepository.save(user);
-        return ResponseEntity.ok("User registered successfully");
+        // Generate token for the new user
+        String token = jwtService.generateToken(user.getEmailAddress());
+        Map<String, Object> response = new HashMap<>();
+        response.put("token", token);
+        response.put("user", user);
+        return ResponseEntity.ok(response);
     }
 }
