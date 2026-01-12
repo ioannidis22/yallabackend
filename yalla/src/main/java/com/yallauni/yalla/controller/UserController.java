@@ -1,7 +1,7 @@
 package com.yallauni.yalla.controller;
 
-import com.yallauni.yalla.model.User;
-import com.yallauni.yalla.service.UserService;
+import com.yallauni.yalla.core.model.User;
+import com.yallauni.yalla.core.model.service.UserService;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

@@ -1,8 +1,9 @@
-package com.yallauni.yalla.service.impl;
+package com.yallauni.yalla.core.model.service.impl;
 
-import com.yallauni.yalla.model.Admin;
-import com.yallauni.yalla.repository.AdminRepository;
-import com.yallauni.yalla.service.AdminService;
+import com.yallauni.yalla.core.model.Admin;
+import com.yallauni.yalla.core.model.repository.AdminRepository;
+import com.yallauni.yalla.core.model.service.AdminService;
+
 import org.springframework.stereotype.Service;
 
 import java.util.List;

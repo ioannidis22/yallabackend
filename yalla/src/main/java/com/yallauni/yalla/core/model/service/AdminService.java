@@ -1,8 +1,9 @@
-package com.yallauni.yalla.service;
+package com.yallauni.yalla.core.model.service;
 
-import com.yallauni.yalla.model.Admin;
 import java.util.List;
 import java.util.Optional;
+
+import com.yallauni.yalla.core.model.Admin;
 
 public interface AdminService {
     Admin createAdmin(Admin admin);

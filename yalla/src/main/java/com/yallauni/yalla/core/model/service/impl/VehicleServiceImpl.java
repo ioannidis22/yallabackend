@@ -1,9 +1,10 @@
-package com.yallauni.yalla.service.impl;
+package com.yallauni.yalla.core.model.service.impl;
 
-import com.yallauni.yalla.model.Vehicle;
-import com.yallauni.yalla.model.User;
-import com.yallauni.yalla.repository.VehicleRepository;
-import com.yallauni.yalla.service.VehicleService;
+import com.yallauni.yalla.core.model.User;
+import com.yallauni.yalla.core.model.Vehicle;
+import com.yallauni.yalla.core.model.repository.VehicleRepository;
+import com.yallauni.yalla.core.model.service.VehicleService;
+
 import org.springframework.stereotype.Service;
 
 import java.util.List;

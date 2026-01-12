@@ -1,10 +1,11 @@
-package com.yallauni.yalla.service.impl;
+package com.yallauni.yalla.core.model.service.impl;
 
-import com.yallauni.yalla.model.Ride;
-import com.yallauni.yalla.model.User;
-import com.yallauni.yalla.model.Vehicle;
-import com.yallauni.yalla.repository.RideRepository;
-import com.yallauni.yalla.service.RideService;
+import com.yallauni.yalla.core.model.Ride;
+import com.yallauni.yalla.core.model.User;
+import com.yallauni.yalla.core.model.Vehicle;
+import com.yallauni.yalla.core.model.repository.RideRepository;
+import com.yallauni.yalla.core.model.service.RideService;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -30,8 +31,6 @@ public class RideServiceImpl implements RideService {
         ride.setDriver(driver);
         ride.setVehicle(vehicle);
         return rideRepository.save(ride);
-    }
-
     }
 
     @Override
@@ -96,8 +95,6 @@ public class RideServiceImpl implements RideService {
             throw new IllegalArgumentException("Ride not found");
         }
     }
-
-    
 
     @Override
     public boolean removePassenger(Long rideId, User passenger) {

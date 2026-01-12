@@ -1,5 +1,4 @@
-
-package com.yallauni.yalla.model;
+package com.yallauni.yalla.core.model;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
@@ -15,6 +14,20 @@ import java.util.List;
         @Index(name = "idx_user_phone_number", columnList = "phone_number")
 })
 public class User {
+
+    @NotNull
+    @NotBlank
+    @Size(min = 6, max = 100)
+    @Column(name = "password", nullable = false, length = 100)
+    private String password;
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -63,11 +76,26 @@ public class User {
     private UserGender gender;
 
     @NotNull
+    @Enumerated(EnumType.STRING)
+    @Column(name = "user_type", nullable = false, length = 20)
+    private UserType userType;
+
+    public UserType getUserType() {
+        return userType;
+    }
+
+    public void setUserType(UserType userType) {
+        this.userType = userType;
+    }
+
+    @NotNull
     @Size(max = 500)
     private String about;
 
     @NotNull
     private List<String> preferences;
+
+    // ...existing code...
 
     // Getters and setters
     public Long getUserID() {
@@ -78,28 +106,36 @@ public class User {
         this.userID = userID;
     }
 
-    public String getFullName() {
-        return fullName;
+    public String getFirstName() {
+        return firstName;
     }
 
-    public void setFullName(String fullName) {
-        this.fullName = fullName;
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
     }
 
-    public String getEmail() {
-        return email;
+    public String getLastName() {
+        return lastName;
     }
 
-    public void setEmail(String email) {
-        this.email = email;
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
     }
 
-    public String getPhoneNumber() {
-        return phoneNumber;
+    public String getEmailAddress() {
+        return emailAddress;
     }
 
-    public void setPhoneNumber(String phoneNumber) {
-        this.phoneNumber = phoneNumber;
+    public void setEmailAddress(String emailAddress) {
+        this.emailAddress = emailAddress;
+    }
+
+    public String getMobilePhoneNumber() {
+        return mobilePhoneNumber;
+    }
+
+    public void setMobilePhoneNumber(String mobilePhoneNumber) {
+        this.mobilePhoneNumber = mobilePhoneNumber;
     }
 
     public String getProfilePictureUrl() {
@@ -126,20 +162,12 @@ public class User {
         this.rating = rating;
     }
 
-    public Gender getGender() {
+    public UserGender getGender() {
         return gender;
     }
 
-    public void setGender(Gender gender) {
+    public void setGender(UserGender gender) {
         this.gender = gender;
-    }
-
-    public int getAge() {
-        return age;
-    }
-
-    public void setAge(int age) {
-        this.age = age;
     }
 
     public String getAbout() {
@@ -157,6 +185,8 @@ public class User {
     public void setPreferences(List<String> preferences) {
         this.preferences = preferences;
     }
+
+    // ...existing code...
 
     public enum UserGender {
         MALE,

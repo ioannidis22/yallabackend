@@ -1,10 +1,11 @@
-package com.yallauni.yalla.service;
+package com.yallauni.yalla.core.model.service;
 
-import com.yallauni.yalla.model.Ride;
-import com.yallauni.yalla.model.User;
-import com.yallauni.yalla.model.Vehicle;
 import java.util.List;
 import java.util.Optional;
+
+import com.yallauni.yalla.core.model.Ride;
+import com.yallauni.yalla.core.model.User;
+import com.yallauni.yalla.core.model.Vehicle;
 
 public interface RideService {
     Ride createRide(Ride ride, User driver, Vehicle vehicle);

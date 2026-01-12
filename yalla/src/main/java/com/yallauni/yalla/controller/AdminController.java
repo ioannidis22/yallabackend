@@ -1,7 +1,8 @@
 package com.yallauni.yalla.controller;
 
-import com.yallauni.yalla.model.Admin;
-import com.yallauni.yalla.service.AdminService;
+import com.yallauni.yalla.core.model.Admin;
+import com.yallauni.yalla.core.model.service.AdminService;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 

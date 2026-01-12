@@ -1,9 +1,10 @@
 package com.yallauni.yalla.controller;
 
-import com.yallauni.yalla.model.Ride;
-import com.yallauni.yalla.model.User;
-import com.yallauni.yalla.model.Vehicle;
-import com.yallauni.yalla.service.RideService;
+import com.yallauni.yalla.core.model.Ride;
+import com.yallauni.yalla.core.model.User;
+import com.yallauni.yalla.core.model.Vehicle;
+import com.yallauni.yalla.core.model.service.RideService;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

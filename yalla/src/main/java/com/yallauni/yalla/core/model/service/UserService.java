@@ -1,8 +1,9 @@
-package com.yallauni.yalla.service;
+package com.yallauni.yalla.core.model.service;
 
-import com.yallauni.yalla.model.User;
 import java.util.List;
 import java.util.Optional;
+
+import com.yallauni.yalla.core.model.User;
 
 public interface UserService {
     User registerUser(User user);

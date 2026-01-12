@@ -1,10 +1,11 @@
-package com.yallauni.yalla.service.impl;
+package com.yallauni.yalla.core.model.service.impl;
 
-import com.yallauni.yalla.model.Review;
-import com.yallauni.yalla.model.Ride;
-import com.yallauni.yalla.model.User;
-import com.yallauni.yalla.repository.ReviewRepository;
-import com.yallauni.yalla.service.ReviewService;
+import com.yallauni.yalla.core.model.Review;
+import com.yallauni.yalla.core.model.Ride;
+import com.yallauni.yalla.core.model.User;
+import com.yallauni.yalla.core.model.repository.ReviewRepository;
+import com.yallauni.yalla.core.model.service.ReviewService;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -30,8 +31,6 @@ public class ReviewServiceImpl implements ReviewService {
         review.setRide(ride);
         review.setReviewer(reviewer);
         return reviewRepository.save(review);
-    }
-
     }
 
     @Override
@@ -60,4 +59,4 @@ public class ReviewServiceImpl implements ReviewService {
     public void deleteReview(Long id) {
         reviewRepository.deleteById(id);
     }
-    }
+}
