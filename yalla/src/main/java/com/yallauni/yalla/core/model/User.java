@@ -15,6 +15,20 @@ import java.util.List;
 })
 public class User {
 
+    @NotNull
+    @NotBlank
+    @Size(min = 6, max = 100)
+    @Column(name = "password", nullable = false, length = 100)
+    private String password;
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
@@ -199,5 +213,4 @@ public class User {
         this.driverLicense = driverLicense;
     }
 
-    // ...existing code...
 }
