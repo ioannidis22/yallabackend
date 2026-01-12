@@ -1,10 +1,11 @@
-package com.yallauni.yalla.service;
+package com.yallauni.yalla.core.model.service;
 
-import com.yallauni.yalla.model.Review;
-import com.yallauni.yalla.model.Ride;
-import com.yallauni.yalla.model.User;
 import java.util.List;
 import java.util.Optional;
+
+import com.yallauni.yalla.core.model.Review;
+import com.yallauni.yalla.core.model.Ride;
+import com.yallauni.yalla.core.model.User;
 
 public interface ReviewService {
     Review addReview(Review review, Ride ride, User reviewer);

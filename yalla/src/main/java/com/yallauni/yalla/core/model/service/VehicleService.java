@@ -1,9 +1,10 @@
-package com.yallauni.yalla.service;
+package com.yallauni.yalla.core.model.service;
 
-import com.yallauni.yalla.model.Vehicle;
-import com.yallauni.yalla.model.User;
 import java.util.List;
 import java.util.Optional;
+
+import com.yallauni.yalla.core.model.User;
+import com.yallauni.yalla.core.model.Vehicle;
 
 public interface VehicleService {
     Vehicle registerVehicle(Vehicle vehicle, User driver);

@@ -2,7 +2,8 @@ package com.yallauni.yalla.controller;
 
 import com.stripe.exception.StripeException;
 import com.stripe.model.PaymentIntent;
-import com.yallauni.yalla.service.StripeService;
+import com.yallauni.yalla.core.model.service.StripeService;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

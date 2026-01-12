@@ -1,4 +1,4 @@
-package com.yallauni.yalla.model;
+package com.yallauni.yalla.core.model;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;

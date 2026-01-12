@@ -1,8 +1,9 @@
-package com.yallauni.yalla.service.impl;
+package com.yallauni.yalla.core.model.service.impl;
 
-import com.yallauni.yalla.model.User;
-import com.yallauni.yalla.repository.UserRepository;
-import com.yallauni.yalla.service.UserService;
+import com.yallauni.yalla.core.model.User;
+import com.yallauni.yalla.core.model.repository.UserRepository;
+import com.yallauni.yalla.core.model.service.UserService;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

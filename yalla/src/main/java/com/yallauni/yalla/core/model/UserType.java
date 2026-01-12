@@ -1,4 +1,4 @@
-package com.yallauni.yalla.model;
+package com.yallauni.yalla.core.model;
 
 public enum UserType {
     PASSENGER,

@@ -1,4 +1,4 @@
-package com.yallauni.yalla.service;
+package com.yallauni.yalla.core.model.service;
 
 import com.stripe.Stripe;
 import com.stripe.exception.StripeException;
