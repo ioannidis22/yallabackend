@@ -196,17 +196,17 @@ public class User {
         ADMIN
     }
 
-    // Driver-specific fields (nullable for non-drivers)
-    @Size(max = 30)
-    @Column(name = "driver_license")
-    private String driverLicense;
+// Driver-specific fields (nullable for non-drivers)
+@Size(max = 30)
+@Column(name = "driver_license", nullable = true)
+private String driverLicense;
 
-    public String getDriverLicense() {
-        return driverLicense;
-    }
+public String getDriverLicense() {
+    return driverLicense;
+}
 
-    public void setDriverLicense(String driverLicense) {
-        this.driverLicense = driverLicense;
-    }
+public void setDriverLicense(String driverLicense) {
+    this.driverLicense = driverLicense;
+}
 
 }
