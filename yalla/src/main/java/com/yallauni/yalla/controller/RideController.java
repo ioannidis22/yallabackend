@@ -4,7 +4,9 @@ import com.yallauni.yalla.core.model.Ride;
 import com.yallauni.yalla.core.model.User;
 import com.yallauni.yalla.core.model.Vehicle;
 import com.yallauni.yalla.core.model.service.RideService;
-
+import com.yallauni.yalla.dto.ride.RideCreateDTO;
+import com.yallauni.yalla.dto.ride.RideResponseDTO;
+ import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -23,33 +25,60 @@ public class RideController {
     }
 
     @PostMapping("/create")
-    public ResponseEntity<?> createRide(@RequestBody Ride ride, @RequestParam Long driverId,
-            @RequestParam Long vehicleId) {
-        try {
-            User driver = new User();
-            driver.setUserID(driverId);
-            Vehicle vehicle = new Vehicle();
-            vehicle.setCarId(vehicleId);
-            return ResponseEntity.ok(rideService.createRide(ride, driver, vehicle));
-        } catch (IllegalArgumentException | IllegalStateException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
+    public ResponseEntity<RideResponseDTO> createRide(
+            @Valid @RequestBody RideCreateDTO dto,
+            @RequestParam Long driverId,
+            @RequestParam Long vehicleId
+    ) {
+        return ResponseEntity.ok(
+                rideService.createRide(dto, driverId, vehicleId)
+        );
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Ride> getRideById(@PathVariable Long id) {
+    public ResponseEntity<RideResponseDTO> getRideById(@PathVariable Long id) {
         Optional<Ride> ride = rideService.findById(id);
-        return ride.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+        if (ride.isPresent()) {
+            Ride r = ride.get();
+            RideResponseDTO dto = new RideResponseDTO();
+            dto.setId(r.getRideId());
+            dto.setOrigin(r.getStartingPoint());
+            dto.setDestination(r.getDestination());
+            // dto.setDate(...); // Προσθέστε αν υπάρχει πεδίο ημερομηνίας
+            return ResponseEntity.ok(dto);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
     }
 
     @GetMapping
-    public List<Ride> getAllRides() {
-        return rideService.findAll();
+    public List<RideResponseDTO> getAllRides() {
+        List<Ride> rides = rideService.findAll();
+        return rides.stream().map(r -> {
+            RideResponseDTO dto = new RideResponseDTO();
+            dto.setId(r.getRideId());
+            dto.setOrigin(r.getStartingPoint());
+            dto.setDestination(r.getDestination());
+            // dto.setDate(...); // Προσθέστε αν υπάρχει πεδίο ημερομηνίας
+            return dto;
+        }).toList();
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Ride> updateRide(@PathVariable Long id, @RequestBody Ride ride) {
-        return ResponseEntity.ok(rideService.updateRide(id, ride));
+    public ResponseEntity<RideResponseDTO> updateRide(@PathVariable Long id, @RequestBody RideCreateDTO dto) {
+        // Θα χρειαστεί να μετατρέψετε το DTO σε entity Ride
+        Ride ride = new Ride();
+        ride.setRideId(id);
+        ride.setStartingPoint(dto.getOrigin());
+        ride.setDestination(dto.getDestination());
+        // ride.setDate(...); // Προσθέστε αν υπάρχει πεδίο ημερομηνίας
+        Ride updated = rideService.updateRide(id, ride);
+        RideResponseDTO response = new RideResponseDTO();
+        response.setId(updated.getRideId());
+        response.setOrigin(updated.getStartingPoint());
+        response.setDestination(updated.getDestination());
+        // response.setDate(...);
+        return ResponseEntity.ok(response);
     }
 
     @DeleteMapping("/{id}")

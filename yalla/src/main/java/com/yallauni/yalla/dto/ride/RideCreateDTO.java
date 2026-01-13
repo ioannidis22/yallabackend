@@ -1,10 +1,19 @@
 package com.yallauni.yalla.dto.ride;
 
+import jakarta.validation.constraints.*;
+
 public class RideCreateDTO {
+
+    @NotBlank
     private String origin;
+
+    @NotBlank
     private String destination;
+
+    @NotBlank
     private String date;
-    // Προσθέστε και άλλα πεδία αν χρειάζεται
+
+
 
     public String getOrigin() {
         return origin;

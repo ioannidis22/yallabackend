@@ -1,7 +1,10 @@
 package com.yallauni.yalla.controller;
 
+
 import com.yallauni.yalla.core.model.Admin;
 import com.yallauni.yalla.core.model.service.AdminService;
+import com.yallauni.yalla.dto.admin.AdminCreateDTO;
+import com.yallauni.yalla.dto.admin.AdminResponseDTO;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -20,24 +23,59 @@ public class AdminController {
     }
 
     @PostMapping("/create")
-    public ResponseEntity<Admin> createAdmin(@RequestBody Admin admin) {
-        return ResponseEntity.ok(adminService.createAdmin(admin));
+    public ResponseEntity<AdminResponseDTO> createAdmin(@RequestBody AdminCreateDTO adminDto) {
+        Admin admin = new Admin();
+        admin.setUsername(adminDto.getUsername());
+        admin.setPassword(adminDto.getPassword());
+        admin.setEmail(adminDto.getEmail());
+        Admin saved = adminService.createAdmin(admin);
+        AdminResponseDTO response = new AdminResponseDTO();
+        response.setId(saved.getId());
+        response.setUsername(saved.getUsername());
+        response.setEmail(saved.getEmail());
+        return ResponseEntity.ok(response);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Admin> getAdminById(@PathVariable Long id) {
+    public ResponseEntity<AdminResponseDTO> getAdminById(@PathVariable Long id) {
         Optional<Admin> admin = adminService.findById(id);
-        return admin.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+        if (admin.isPresent()) {
+            Admin a = admin.get();
+            AdminResponseDTO dto = new AdminResponseDTO();
+            dto.setId(a.getId());
+            dto.setUsername(a.getUsername());
+            dto.setEmail(a.getEmail());
+            return ResponseEntity.ok(dto);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
     }
 
     @GetMapping
-    public List<Admin> getAllAdmins() {
-        return adminService.findAll();
+    public List<AdminResponseDTO> getAllAdmins() {
+        List<Admin> admins = adminService.findAll();
+        return admins.stream().map(a -> {
+            AdminResponseDTO dto = new AdminResponseDTO();
+            dto.setId(a.getId());
+            dto.setUsername(a.getUsername());
+            dto.setEmail(a.getEmail());
+            return dto;
+        }).toList();
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Admin> updateAdmin(@PathVariable Long id, @RequestBody Admin admin) {
-        return ResponseEntity.ok(adminService.updateAdmin(id, admin));
+    public ResponseEntity<AdminResponseDTO> updateAdmin(@PathVariable Long id, @RequestBody AdminCreateDTO adminDto) {
+        Admin admin = new Admin();
+        admin.setId(id);
+        admin.setUsername(adminDto.getUsername());
+        admin.setPassword(adminDto.getPassword());
+        admin.setEmail(adminDto.getEmail());
+        Admin updated = adminService.updateAdmin(id, admin);
+        AdminResponseDTO response = new AdminResponseDTO();
+        response.setId(updated.getId());
+        response.setUsername(updated.getUsername());
+        response.setEmail(updated.getEmail());
+        return ResponseEntity.ok(response);
     }
 
     @DeleteMapping("/{id}")

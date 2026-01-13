@@ -6,9 +6,12 @@ import java.util.Optional;
 import com.yallauni.yalla.core.model.Ride;
 import com.yallauni.yalla.core.model.User;
 import com.yallauni.yalla.core.model.Vehicle;
+import com.yallauni.yalla.dto.ride.RideCreateDTO;
+import com.yallauni.yalla.dto.ride.RideResponseDTO;
 
 public interface RideService {
-    Ride createRide(Ride ride, User driver, Vehicle vehicle);
+    RideResponseDTO createRide(RideCreateDTO dto, Long driverId, Long vehicleId);
+
 
     Optional<Ride> findById(Long id);
 
