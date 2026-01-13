@@ -14,7 +14,7 @@ public class VehicleCreateDTO {
     @Min(2)
     @Max(9)
     private int capacity;
-    // Προσθέστε και άλλα πεδία αν χρειάζεται
+    
 
     public String getMake() { return make; }
     public void setMake(String make) { this.make = make; }

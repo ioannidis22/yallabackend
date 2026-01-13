@@ -13,6 +13,8 @@ import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.List;
 import java.util.Optional;
@@ -35,8 +37,7 @@ public class RideController {
     public ResponseEntity<RideResponseDTO> createRide(
             @Valid @RequestBody RideCreateDTO dto,
             @RequestParam Long driverId,
-            @RequestParam Long vehicleId
-    ) {
+            @RequestParam Long vehicleId) {
         User driver = userRepository.findById(driverId)
                 .orElseThrow(() -> new IllegalArgumentException("Driver not found"));
         Vehicle vehicle = vehicleRepository.findById(vehicleId)
@@ -82,27 +83,29 @@ public class RideController {
         return ResponseEntity.noContent().build();
     }
 
-    @PostMapping("/{rideId}/add-passenger")
-    @PreAuthorize("hasRole('DRIVER') or hasRole('ADMIN')")
-    public ResponseEntity<?> addPassenger(@PathVariable Long rideId, @RequestParam Long passengerId) {
+    @PostMapping("/{rideId}/join")
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<?> joinRide(@PathVariable Long rideId, @AuthenticationPrincipal UserDetails userDetails) {
         try {
-            User passenger = userRepository.findById(passengerId)
-                    .orElseThrow(() -> new IllegalArgumentException("Passenger not found"));
+            User passenger = userRepository.findByEmailAddress(userDetails.getUsername())
+                    .orElseThrow(() -> new IllegalArgumentException("User not found"));
             boolean added = rideService.addPassenger(rideId, passenger);
-            return added ? ResponseEntity.ok().build() : ResponseEntity.badRequest().body("Could not add passenger");
+            return added ? ResponseEntity.ok().body("Successfully joined the ride")
+                    : ResponseEntity.badRequest().body("Could not join ride");
         } catch (IllegalArgumentException | IllegalStateException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
 
-    @PostMapping("/{rideId}/remove-passenger")
-    @PreAuthorize("hasRole('DRIVER') or hasRole('ADMIN')")
-    public ResponseEntity<?> removePassenger(@PathVariable Long rideId, @RequestParam Long passengerId) {
+    @PostMapping("/{rideId}/leave")
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<?> leaveRide(@PathVariable Long rideId, @AuthenticationPrincipal UserDetails userDetails) {
         try {
-            User passenger = userRepository.findById(passengerId)
-                    .orElseThrow(() -> new IllegalArgumentException("Passenger not found"));
+            User passenger = userRepository.findByEmailAddress(userDetails.getUsername())
+                    .orElseThrow(() -> new IllegalArgumentException("User not found"));
             boolean removed = rideService.removePassenger(rideId, passenger);
-            return removed ? ResponseEntity.ok().build() : ResponseEntity.badRequest().body("Could not remove passenger");
+            return removed ? ResponseEntity.ok().body("Successfully left the ride")
+                    : ResponseEntity.badRequest().body("Could not leave ride");
         } catch (IllegalArgumentException | IllegalStateException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }

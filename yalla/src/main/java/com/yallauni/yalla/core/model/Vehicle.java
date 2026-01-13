@@ -35,7 +35,8 @@ public class Vehicle {
     @Column(nullable = false)
     private String color;
 
-    @Size(min = 2, max = 9)
+    @Min(2)
+    @Max(9)
     @Column(nullable = false)
     private int capacity;
 

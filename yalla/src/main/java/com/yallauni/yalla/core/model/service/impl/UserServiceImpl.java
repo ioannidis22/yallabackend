@@ -50,11 +50,20 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserResponseDTO updateUser(Long id, UserCreateDTO userDto) {
-        User user = new User();
-        user.setUserID(id);
-        user.setFirstName(userDto.getUsername());
-        user.setEmailAddress(userDto.getEmail());
-        user.setPassword(userDto.getPassword());
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("User not found with id: " + id));
+
+        // Update only provided fields
+        if (userDto.getUsername() != null) {
+            user.setFirstName(userDto.getUsername());
+        }
+        if (userDto.getEmail() != null) {
+            user.setEmailAddress(userDto.getEmail());
+        }
+        if (userDto.getPassword() != null && !userDto.getPassword().isBlank()) {
+            user.setPassword(userDto.getPassword());
+        }
+
         User updated = userRepository.save(user);
         return toDto(updated);
     }

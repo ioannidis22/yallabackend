@@ -40,9 +40,29 @@ public class VehicleServiceImpl implements VehicleService {
     }
 
     @Override
-    public Vehicle updateVehicle(Long id, Vehicle vehicle) {
-        vehicle.setCarId(id);
-        return vehicleRepository.save(vehicle);
+    public Vehicle updateVehicle(Long id, Vehicle vehicleUpdate) {
+        Vehicle existing = vehicleRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Vehicle not found with id: " + id));
+
+        // Update only provided fields, preserve driver
+        if (vehicleUpdate.getMake() != null) {
+            existing.setMake(vehicleUpdate.getMake());
+        }
+        if (vehicleUpdate.getModel() != null) {
+            existing.setModel(vehicleUpdate.getModel());
+        }
+        if (vehicleUpdate.getLicensePlate() != null) {
+            existing.setLicensePlate(vehicleUpdate.getLicensePlate());
+        }
+        if (vehicleUpdate.getColor() != null) {
+            existing.setColor(vehicleUpdate.getColor());
+        }
+        if (vehicleUpdate.getCapacity() > 0) {
+            existing.setCapacity(vehicleUpdate.getCapacity());
+        }
+        // Driver is NOT updated - it stays the same as before
+
+        return vehicleRepository.save(existing);
     }
 
     @Override
