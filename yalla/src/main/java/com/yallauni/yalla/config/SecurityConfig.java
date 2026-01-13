@@ -1,34 +1,99 @@
 package com.yallauni.yalla.config;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import com.yallauni.yalla.core.security.JwtAuthenticationFilter;
+import com.yallauni.yalla.web.rest.error.RestApiAccessDeniedHandler;
+import com.yallauni.yalla.web.rest.error.RestApiAuthenticationEntryPoint;
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.annotation.Order;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-
-import com.yallauni.yalla.core.model.security.JwtAuthenticationFilter;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.header.writers.frameoptions.XFrameOptionsHeaderWriter;
 
+/**
+ * Security configuration with dual filter chains:
+ * 1. API chain (/api/**) - JWT-based, stateless
+ * 2. UI chain (/**) - Form login, stateful (for H2 console, etc.)
+ */
 @Configuration
+@EnableMethodSecurity // enables @PreAuthorize
 public class SecurityConfig {
-    @Autowired
-    private JwtAuthenticationFilter jwtAuthenticationFilter;
 
+    /**
+     * API chain for REST endpoints (stateless, JWT).
+     */
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    @Order(1)
+    public SecurityFilterChain apiChain(final HttpSecurity http,
+            final JwtAuthenticationFilter jwtAuthenticationFilter,
+            final RestApiAuthenticationEntryPoint restApiAuthenticationEntryPoint,
+            final RestApiAccessDeniedHandler restApiAccessDeniedHandler) throws Exception {
         http
-                .csrf(csrf -> csrf.disable())
+                .securityMatcher("/api/**")
+                .csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
-                    .requestMatchers("/api/auth/**", "/api/users/register").permitAll()
-                    .anyRequest().authenticated()
-                )
-                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+                        // Public endpoints
+                        .requestMatchers("/api/auth/**").permitAll()
+                        .requestMatchers("/api/v1/auth/**").permitAll()
+                        .requestMatchers("/api/users/register").permitAll()
+                        // All other API endpoints require authentication
+                        .anyRequest().authenticated())
+                .exceptionHandling(exh -> exh
+                        .authenticationEntryPoint(restApiAuthenticationEntryPoint)
+                        .accessDeniedHandler(restApiAccessDeniedHandler))
+                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
+                .httpBasic(AbstractHttpConfigurer::disable)
+                .formLogin(AbstractHttpConfigurer::disable);
+        return http.build();
+    }
+
+    /**
+     * UI chain for web pages and tools (stateful, cookie-based).
+     */
+    @Bean
+    @Order(2)
+    public SecurityFilterChain uiChain(final HttpSecurity http) throws Exception {
+        http
+                .securityMatcher("/**")
+                .csrf(AbstractHttpConfigurer::disable) // Disable for H2 console
+                .headers(headers -> headers
+                        .addHeaderWriter(
+                                new XFrameOptionsHeaderWriter(XFrameOptionsHeaderWriter.XFrameOptionsMode.SAMEORIGIN)))
+                .authorizeHttpRequests(auth -> auth
+                        // H2 Console
+                        .requestMatchers("/h2-console/**").permitAll()
+                        // Swagger/OpenAPI
+                        .requestMatchers("/v3/api-docs/**", "/swagger-ui.html", "/swagger-ui/**").permitAll()
+                        // Public pages
+                        .requestMatchers("/", "/login", "/register", "/error").permitAll()
+                        // Static resources
+                        .requestMatchers("/css/**", "/js/**", "/images/**").permitAll()
+                        // Everything else requires authentication
+                        .anyRequest().authenticated())
+                .formLogin(form -> form
+                        .loginPage("/login")
+                        .loginProcessingUrl("/login")
+                        .defaultSuccessUrl("/profile", true)
+                        .failureUrl("/login?error")
+                        .permitAll())
+                .logout(logout -> logout
+                        .logoutUrl("/logout")
+                        .logoutSuccessUrl("/login?logout")
+                        .deleteCookies("JSESSIONID")
+                        .invalidateHttpSession(true)
+                        .permitAll())
+                .httpBasic(AbstractHttpConfigurer::disable);
+
         return http.build();
     }
 
@@ -38,7 +103,7 @@ public class SecurityConfig {
     }
 
     @Bean
-    public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
+    public AuthenticationManager authenticationManager(final AuthenticationConfiguration config) throws Exception {
         return config.getAuthenticationManager();
     }
 }
