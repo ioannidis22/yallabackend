@@ -5,7 +5,7 @@ import com.yallauni.yalla.core.model.User;
 import com.yallauni.yalla.core.model.Vehicle;
 import com.yallauni.yalla.core.model.service.RideService;
 
-import org.springframework.beans.factory.annotation.Autowired;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,7 +17,7 @@ import java.util.Optional;
 public class RideController {
     private final RideService rideService;
 
-    @Autowired
+    
     public RideController(RideService rideService) {
         this.rideService = rideService;
     }

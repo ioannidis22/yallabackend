@@ -23,14 +23,7 @@ import java.util.Map;
 @Component
 public class RestApiAccessDeniedHandler implements AccessDeniedHandler {
 
-    private final ObjectMapper objectMapper;
-
-    public RestApiAccessDeniedHandler(final ObjectMapper objectMapper) {
-        if (objectMapper == null) {
-            throw new NullPointerException("objectMapper must not be null");
-        }
-        this.objectMapper = objectMapper;
-    }
+    private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 
     @Override
     public void handle(HttpServletRequest request,
@@ -46,7 +39,7 @@ public class RestApiAccessDeniedHandler implements AccessDeniedHandler {
         error.put("message", "Access denied");
         error.put("path", request.getRequestURI());
 
-        final String json = this.objectMapper.writeValueAsString(error);
+        final String json = OBJECT_MAPPER.writeValueAsString(error);
         response.getWriter().write(json);
     }
 }

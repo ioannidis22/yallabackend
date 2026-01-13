@@ -6,7 +6,6 @@ import com.yallauni.yalla.core.model.User;
 import com.yallauni.yalla.core.model.repository.ReviewRepository;
 import com.yallauni.yalla.core.model.service.ReviewService;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

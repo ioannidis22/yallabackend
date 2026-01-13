@@ -6,7 +6,7 @@ import com.yallauni.yalla.core.model.Vehicle;
 import com.yallauni.yalla.core.model.repository.RideRepository;
 import com.yallauni.yalla.core.model.service.RideService;
 
-import org.springframework.beans.factory.annotation.Autowired;
+
 import org.springframework.stereotype.Service;
 
 import java.util.List;

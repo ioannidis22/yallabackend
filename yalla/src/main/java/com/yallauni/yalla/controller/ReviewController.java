@@ -5,7 +5,7 @@ import com.yallauni.yalla.core.model.Ride;
 import com.yallauni.yalla.core.model.User;
 import com.yallauni.yalla.core.model.service.ReviewService;
 
-import org.springframework.beans.factory.annotation.Autowired;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,7 +17,7 @@ import java.util.Optional;
 public class ReviewController {
     private final ReviewService reviewService;
 
-    @Autowired
+    
     public ReviewController(ReviewService reviewService) {
         this.reviewService = reviewService;
     }

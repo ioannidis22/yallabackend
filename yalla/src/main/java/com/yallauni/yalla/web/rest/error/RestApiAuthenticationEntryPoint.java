@@ -23,14 +23,7 @@ import java.util.Map;
 @Component
 public class RestApiAuthenticationEntryPoint implements AuthenticationEntryPoint {
 
-    private final ObjectMapper objectMapper;
-
-    public RestApiAuthenticationEntryPoint(final ObjectMapper objectMapper) {
-        if (objectMapper == null) {
-            throw new NullPointerException("objectMapper must not be null");
-        }
-        this.objectMapper = objectMapper;
-    }
+    private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 
     @Override
     public void commence(HttpServletRequest request,
@@ -46,7 +39,7 @@ public class RestApiAuthenticationEntryPoint implements AuthenticationEntryPoint
         error.put("message", "Authentication required");
         error.put("path", request.getRequestURI());
 
-        final String json = this.objectMapper.writeValueAsString(error);
+        final String json = OBJECT_MAPPER.writeValueAsString(error);
         response.getWriter().write(json);
     }
 }

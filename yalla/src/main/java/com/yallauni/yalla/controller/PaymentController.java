@@ -4,7 +4,7 @@ import com.stripe.exception.StripeException;
 import com.stripe.model.PaymentIntent;
 import com.yallauni.yalla.core.model.service.StripeService;
 
-import org.springframework.beans.factory.annotation.Autowired;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,7 +17,7 @@ public class PaymentController {
 
     private final StripeService stripeService;
 
-    @Autowired
+    
     public PaymentController(StripeService stripeService) {
         this.stripeService = stripeService;
     }

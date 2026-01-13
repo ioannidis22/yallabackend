@@ -5,13 +5,12 @@ import jakarta.validation.constraints.*;
 import java.util.List;
 
 @Entity
-@Table(name = "user", uniqueConstraints = {
-        @UniqueConstraint(name = "user_id", columnNames = "user_id"),
+@Table(name = "app_user", uniqueConstraints = {
         @UniqueConstraint(name = "user_email_address", columnNames = "email_address"),
-        @UniqueConstraint(name = "user_phone_number", columnNames = "phone_number")
+        @UniqueConstraint(name = "user_phone_number", columnNames = "mobile_phone_number")
 }, indexes = {
         @Index(name = "idx_user_email_address", columnList = "email_address"),
-        @Index(name = "idx_user_phone_number", columnList = "phone_number")
+        @Index(name = "idx_user_phone_number", columnList = "mobile_phone_number")
 })
 public class User {
 

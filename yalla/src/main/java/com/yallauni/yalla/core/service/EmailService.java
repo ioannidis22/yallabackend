@@ -2,6 +2,7 @@ package com.yallauni.yalla.core.service;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -20,7 +21,7 @@ public class EmailService {
     private final boolean emailEnabled;
 
     public EmailService(
-            final JavaMailSender mailSender,
+            @Autowired(required = false) final JavaMailSender mailSender,
             @Value("${app.email.from:noreply@yallauni.com}") final String fromEmail,
             @Value("${app.email.enabled:false}") final boolean emailEnabled) {
         this.mailSender = mailSender;
