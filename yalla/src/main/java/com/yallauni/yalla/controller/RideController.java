@@ -8,8 +8,13 @@ import com.yallauni.yalla.dto.ride.RideCreateDTO;
 import com.yallauni.yalla.dto.ride.RideResponseDTO;
  import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+
+
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import org.springframework.security.access.prepost.PreAuthorize;
 
 import java.util.List;
 import java.util.Optional;
@@ -19,12 +24,13 @@ import java.util.Optional;
 public class RideController {
     private final RideService rideService;
 
-    @Autowired
+    
     public RideController(RideService rideService) {
         this.rideService = rideService;
     }
 
     @PostMapping("/create")
+    @PreAuthorize("hasRole('DRIVER') or hasRole('ADMIN')")
     public ResponseEntity<RideResponseDTO> createRide(
             @Valid @RequestBody RideCreateDTO dto,
             @RequestParam Long driverId,
@@ -36,77 +42,49 @@ public class RideController {
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<RideResponseDTO> getRideById(@PathVariable Long id) {
-        Optional<Ride> ride = rideService.findById(id);
-        if (ride.isPresent()) {
-            Ride r = ride.get();
-            RideResponseDTO dto = new RideResponseDTO();
-            dto.setId(r.getRideId());
-            dto.setOrigin(r.getStartingPoint());
-            dto.setDestination(r.getDestination());
-            // dto.setDate(...); // Προσθέστε αν υπάρχει πεδίο ημερομηνίας
-            return ResponseEntity.ok(dto);
-        } else {
-            return ResponseEntity.notFound().build();
-        }
+        Optional<RideResponseDTO> rideDto = rideService.findById(id);
+        return rideDto.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @GetMapping
+    @PreAuthorize("isAuthenticated()")
     public List<RideResponseDTO> getAllRides() {
-        List<Ride> rides = rideService.findAll();
-        return rides.stream().map(r -> {
-            RideResponseDTO dto = new RideResponseDTO();
-            dto.setId(r.getRideId());
-            dto.setOrigin(r.getStartingPoint());
-            dto.setDestination(r.getDestination());
-            // dto.setDate(...); // Προσθέστε αν υπάρχει πεδίο ημερομηνίας
-            return dto;
-        }).toList();
+        return rideService.findAll();
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasRole('DRIVER') or hasRole('ADMIN')")
     public ResponseEntity<RideResponseDTO> updateRide(@PathVariable Long id, @RequestBody RideCreateDTO dto) {
-        // Θα χρειαστεί να μετατρέψετε το DTO σε entity Ride
-        Ride ride = new Ride();
-        ride.setRideId(id);
-        ride.setStartingPoint(dto.getOrigin());
-        ride.setDestination(dto.getDestination());
-        // ride.setDate(...); // Προσθέστε αν υπάρχει πεδίο ημερομηνίας
-        Ride updated = rideService.updateRide(id, ride);
-        RideResponseDTO response = new RideResponseDTO();
-        response.setId(updated.getRideId());
-        response.setOrigin(updated.getStartingPoint());
-        response.setDestination(updated.getDestination());
-        // response.setDate(...);
-        return ResponseEntity.ok(response);
+        RideResponseDTO updated = rideService.updateRide(id, dto);
+        return ResponseEntity.ok(updated);
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('DRIVER') or hasRole('ADMIN')")
     public ResponseEntity<Void> deleteRide(@PathVariable Long id) {
         rideService.deleteRide(id);
         return ResponseEntity.noContent().build();
     }
 
     @PostMapping("/{rideId}/add-passenger")
+    @PreAuthorize("hasRole('DRIVER') or hasRole('ADMIN')")
     public ResponseEntity<?> addPassenger(@PathVariable Long rideId, @RequestParam Long passengerId) {
         try {
-            User passenger = new User();
-            passenger.setUserID(passengerId);
-            boolean added = rideService.addPassenger(rideId, passenger);
-            return added ? ResponseEntity.ok().build() : ResponseEntity.badRequest().body("Could not add passenger");
+            rideService.addPassenger(rideId, passengerId);
+            return ResponseEntity.ok().build();
         } catch (IllegalArgumentException | IllegalStateException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
 
     @PostMapping("/{rideId}/remove-passenger")
+    @PreAuthorize("hasRole('DRIVER') or hasRole('ADMIN')")
     public ResponseEntity<?> removePassenger(@PathVariable Long rideId, @RequestParam Long passengerId) {
         try {
-            User passenger = new User();
-            passenger.setUserID(passengerId);
-            boolean removed = rideService.removePassenger(rideId, passenger);
-            return removed ? ResponseEntity.ok().build()
-                    : ResponseEntity.badRequest().body("Could not remove passenger");
+            rideService.removePassenger(rideId, passengerId);
+            return ResponseEntity.ok().build();
         } catch (IllegalArgumentException | IllegalStateException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }

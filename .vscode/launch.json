@@ -1,0 +1,14 @@
+{
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Spring Boot-YallaApplication<yalla>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "mainClass": "com.yallauni.yalla.YallaApplication",
+            "projectName": "yalla",
+            "args": "",
+            "envFile": "${workspaceFolder}/.env"
+        }
+    ]
+}

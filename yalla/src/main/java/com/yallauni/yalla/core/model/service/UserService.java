@@ -3,18 +3,19 @@ package com.yallauni.yalla.core.model.service;
 import java.util.List;
 import java.util.Optional;
 
-import com.yallauni.yalla.core.model.User;
+import com.yallauni.yalla.dto.user.UserCreateDTO;
+import com.yallauni.yalla.dto.user.UserResponseDTO;
 
 public interface UserService {
-    User registerUser(User user);
+    UserResponseDTO registerUser(UserCreateDTO userDto);
 
-    Optional<User> findById(Long id);
+    Optional<UserResponseDTO> findById(Long id);
 
-    Optional<User> findByEmail(String email);
+    Optional<UserResponseDTO> findByEmail(String email);
 
-    List<User> findAll();
+    List<UserResponseDTO> findAll();
 
-    User updateUser(Long id, User user);
+    UserResponseDTO updateUser(Long id, UserCreateDTO userDto);
 
     void deleteUser(Long id);
 }

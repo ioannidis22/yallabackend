@@ -9,6 +9,8 @@ import com.yallauni.yalla.dto.admin.AdminResponseDTO;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import org.springframework.security.access.prepost.PreAuthorize;
+
 import java.util.List;
 import java.util.Optional;
 
@@ -23,6 +25,7 @@ public class AdminController {
     }
 
     @PostMapping("/create")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<AdminResponseDTO> createAdmin(@RequestBody AdminCreateDTO adminDto) {
         Admin admin = new Admin();
         admin.setUsername(adminDto.getUsername());
@@ -37,6 +40,7 @@ public class AdminController {
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<AdminResponseDTO> getAdminById(@PathVariable Long id) {
         Optional<Admin> admin = adminService.findById(id);
         if (admin.isPresent()) {
@@ -52,6 +56,7 @@ public class AdminController {
     }
 
     @GetMapping
+    @PreAuthorize("hasRole('ADMIN')")
     public List<AdminResponseDTO> getAllAdmins() {
         List<Admin> admins = adminService.findAll();
         return admins.stream().map(a -> {
@@ -64,6 +69,7 @@ public class AdminController {
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<AdminResponseDTO> updateAdmin(@PathVariable Long id, @RequestBody AdminCreateDTO adminDto) {
         Admin admin = new Admin();
         admin.setId(id);
@@ -79,6 +85,7 @@ public class AdminController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Void> deleteAdmin(@PathVariable Long id) {
         adminService.deleteAdmin(id);
         return ResponseEntity.noContent().build();

@@ -9,6 +9,8 @@ import com.yallauni.yalla.dto.user.UserResponseDTO;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import org.springframework.security.access.prepost.PreAuthorize;
+
 import java.util.List;
 import java.util.Optional;
 
@@ -24,64 +26,32 @@ public class UserController {
 
     @PostMapping("/register")
     public ResponseEntity<UserResponseDTO> registerUser(@RequestBody UserCreateDTO userDto) {
-        // Map DTO to entity
-        User user = new User();
-        user.setFirstName(userDto.getUsername()); // Αντίστοιχο mapping, προσαρμόστε αν χρειάζεται
-        user.setEmailAddress(userDto.getEmail());
-        user.setPassword(userDto.getPassword());
-        // Προσθέστε και άλλα πεδία αν χρειάζεται
-        User saved = userService.registerUser(user);
-        // Map entity to response DTO
-        UserResponseDTO response = new UserResponseDTO();
-        response.setId(saved.getUserID());
-        response.setUsername(saved.getFirstName()); // Αντίστοιχο mapping
-        response.setEmail(saved.getEmailAddress());
+        UserResponseDTO response = userService.registerUser(userDto);
         return ResponseEntity.ok(response);
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<UserResponseDTO> getUserById(@PathVariable Long id) {
-        Optional<User> user = userService.findById(id);
-        if (user.isPresent()) {
-            User u = user.get();
-            UserResponseDTO dto = new UserResponseDTO();
-            dto.setId(u.getUserID());
-            dto.setUsername(u.getFirstName());
-            dto.setEmail(u.getEmailAddress());
-            return ResponseEntity.ok(dto);
-        } else {
-            return ResponseEntity.notFound().build();
-        }
+        Optional<UserResponseDTO> userDto = userService.findById(id);
+        return userDto.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @GetMapping
+    @PreAuthorize("isAuthenticated()")
     public List<UserResponseDTO> getAllUsers() {
-        List<User> users = userService.findAll();
-        return users.stream().map(u -> {
-            UserResponseDTO dto = new UserResponseDTO();
-            dto.setId(u.getUserID());
-            dto.setUsername(u.getFirstName());
-            dto.setEmail(u.getEmailAddress());
-            return dto;
-        }).toList();
+        return userService.findAll();
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<UserResponseDTO> updateUser(@PathVariable Long id, @RequestBody UserCreateDTO userDto) {
-        User user = new User();
-        user.setUserID(id);
-        user.setFirstName(userDto.getUsername());
-        user.setEmailAddress(userDto.getEmail());
-        user.setPassword(userDto.getPassword());
-        User updated = userService.updateUser(id, user);
-        UserResponseDTO response = new UserResponseDTO();
-        response.setId(updated.getUserID());
-        response.setUsername(updated.getFirstName());
-        response.setEmail(updated.getEmailAddress());
-        return ResponseEntity.ok(response);
+        UserResponseDTO updated = userService.updateUser(id, userDto);
+        return ResponseEntity.ok(updated);
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
         userService.deleteUser(id);
         return ResponseEntity.noContent().build();

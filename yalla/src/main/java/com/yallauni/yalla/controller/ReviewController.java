@@ -8,9 +8,11 @@ import com.yallauni.yalla.core.model.service.ReviewService;
 import com.yallauni.yalla.dto.review.ReviewCreateDTO;
 import com.yallauni.yalla.dto.review.ReviewResponseDTO;
 
-import org.springframework.beans.factory.annotation.Autowired;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import org.springframework.security.access.prepost.PreAuthorize;
 
 import java.util.List;
 import java.util.Optional;
@@ -20,12 +22,13 @@ import java.util.Optional;
 public class ReviewController {
     private final ReviewService reviewService;
 
-    @Autowired
+    
     public ReviewController(ReviewService reviewService) {
         this.reviewService = reviewService;
     }
 
     @PostMapping("/add")
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<ReviewResponseDTO> addReview(@RequestBody ReviewCreateDTO reviewDto) {
         try {
             Review review = new Review();
@@ -49,6 +52,7 @@ public class ReviewController {
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<ReviewResponseDTO> getReviewById(@PathVariable Long id) {
         Optional<Review> review = reviewService.findById(id);
         if (review.isPresent()) {
@@ -66,6 +70,7 @@ public class ReviewController {
     }
 
     @GetMapping
+    @PreAuthorize("isAuthenticated()")
     public List<ReviewResponseDTO> getAllReviews() {
         List<Review> reviews = reviewService.findAll();
         return reviews.stream().map(r -> {
@@ -80,6 +85,7 @@ public class ReviewController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<Void> deleteReview(@PathVariable Long id) {
         reviewService.deleteReview(id);
         return ResponseEntity.noContent().build();

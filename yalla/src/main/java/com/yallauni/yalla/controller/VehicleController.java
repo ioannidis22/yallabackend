@@ -7,9 +7,11 @@ import com.yallauni.yalla.core.model.service.VehicleService;
 import com.yallauni.yalla.dto.vehicle.VehicleCreateDTO;
 import com.yallauni.yalla.dto.vehicle.VehicleResponseDTO;
 
-import org.springframework.beans.factory.annotation.Autowired;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import org.springframework.security.access.prepost.PreAuthorize;
 
 import java.util.List;
 import java.util.Optional;
@@ -19,12 +21,13 @@ import java.util.Optional;
 public class VehicleController {
     private final VehicleService vehicleService;
 
-    @Autowired
+    
     public VehicleController(VehicleService vehicleService) {
         this.vehicleService = vehicleService;
     }
 
     @PostMapping("/register")
+    @PreAuthorize("hasRole('DRIVER') or hasRole('ADMIN')")
     public ResponseEntity<VehicleResponseDTO> registerVehicle(@RequestBody VehicleCreateDTO vehicleDto, @RequestParam Long driverId) {
         User driver = new User();
         driver.setUserID(driverId);
@@ -47,6 +50,7 @@ public class VehicleController {
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<VehicleResponseDTO> getVehicleById(@PathVariable Long id) {
         Optional<Vehicle> vehicle = vehicleService.findById(id);
         if (vehicle.isPresent()) {
@@ -65,6 +69,7 @@ public class VehicleController {
     }
 
     @GetMapping
+    @PreAuthorize("isAuthenticated()")
     public List<VehicleResponseDTO> getAllVehicles() {
         List<Vehicle> vehicles = vehicleService.findAll();
         return vehicles.stream().map(v -> {
@@ -80,6 +85,7 @@ public class VehicleController {
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasRole('DRIVER') or hasRole('ADMIN')")
     public ResponseEntity<VehicleResponseDTO> updateVehicle(@PathVariable Long id, @RequestBody VehicleCreateDTO vehicleDto) {
         Vehicle vehicle = new Vehicle();
         vehicle.setCarId(id);
@@ -100,6 +106,7 @@ public class VehicleController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('DRIVER') or hasRole('ADMIN')")
     public ResponseEntity<Void> deleteVehicle(@PathVariable Long id) {
         vehicleService.deleteVehicle(id);
         return ResponseEntity.noContent().build();
