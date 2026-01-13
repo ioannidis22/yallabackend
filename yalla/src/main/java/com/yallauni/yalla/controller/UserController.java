@@ -1,7 +1,7 @@
 package com.yallauni.yalla.controller;
 
 
-import com.yallauni.yalla.core.model.User;
+
 import com.yallauni.yalla.core.model.service.UserService;
 import com.yallauni.yalla.dto.user.UserCreateDTO;
 import com.yallauni.yalla.dto.user.UserResponseDTO;
