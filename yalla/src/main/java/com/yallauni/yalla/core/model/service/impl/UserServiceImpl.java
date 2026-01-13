@@ -3,7 +3,8 @@ package com.yallauni.yalla.core.model.service.impl;
 import com.yallauni.yalla.core.model.User;
 import com.yallauni.yalla.core.model.repository.UserRepository;
 import com.yallauni.yalla.core.model.service.UserService;
-
+import com.yallauni.yalla.dto.user.UserCreateDTO;
+import com.yallauni.yalla.dto.user.UserResponseDTO;
 
 import org.springframework.stereotype.Service;
 
@@ -19,37 +20,55 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User registerUser(User user) {
-        // Add business logic for registration (e.g., validation, hashing password)
+    public UserResponseDTO registerUser(UserCreateDTO userDto) {
+        User user = new User();
+        user.setFirstName(userDto.getUsername());
+        user.setEmailAddress(userDto.getEmail());
+        user.setPassword(userDto.getPassword());
+        // Προσθέστε και άλλα πεδία αν χρειάζεται
         if (user.getUserType() == null) {
             user.setUserType(User.UserType.PASSENGER);
         }
-        return userRepository.save(user);
+        User saved = userRepository.save(user);
+        return toDto(saved);
     }
 
     @Override
-    public Optional<User> findById(Long id) {
-        return userRepository.findById(id);
+    public Optional<UserResponseDTO> findById(Long id) {
+        return userRepository.findById(id).map(this::toDto);
     }
 
     @Override
-    public Optional<User> findByEmail(String email) {
-        return userRepository.findByEmailAddress(email);
+    public Optional<UserResponseDTO> findByEmail(String email) {
+        return userRepository.findByEmailAddress(email).map(this::toDto);
     }
 
     @Override
-    public List<User> findAll() {
-        return userRepository.findAll();
+    public List<UserResponseDTO> findAll() {
+        return userRepository.findAll().stream().map(this::toDto).toList();
     }
 
     @Override
-    public User updateUser(Long id, User user) {
+    public UserResponseDTO updateUser(Long id, UserCreateDTO userDto) {
+        User user = new User();
         user.setUserID(id);
-        return userRepository.save(user);
+        user.setFirstName(userDto.getUsername());
+        user.setEmailAddress(userDto.getEmail());
+        user.setPassword(userDto.getPassword());
+        User updated = userRepository.save(user);
+        return toDto(updated);
     }
 
     @Override
     public void deleteUser(Long id) {
         userRepository.deleteById(id);
+    }
+
+    private UserResponseDTO toDto(User user) {
+        UserResponseDTO dto = new UserResponseDTO();
+        dto.setId(user.getUserID());
+        dto.setUsername(user.getFirstName());
+        dto.setEmail(user.getEmailAddress());
+        return dto;
     }
 }

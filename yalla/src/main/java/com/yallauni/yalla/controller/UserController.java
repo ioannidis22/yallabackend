@@ -1,10 +1,15 @@
 package com.yallauni.yalla.controller;
 
+
 import com.yallauni.yalla.core.model.User;
 import com.yallauni.yalla.core.model.service.UserService;
+import com.yallauni.yalla.dto.user.UserCreateDTO;
+import com.yallauni.yalla.dto.user.UserResponseDTO;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import org.springframework.security.access.prepost.PreAuthorize;
 
 import java.util.List;
 import java.util.Optional;
@@ -20,27 +25,33 @@ public class UserController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<User> registerUser(@RequestBody User user) {
-        return ResponseEntity.ok(userService.registerUser(user));
+    public ResponseEntity<UserResponseDTO> registerUser(@RequestBody UserCreateDTO userDto) {
+        UserResponseDTO response = userService.registerUser(userDto);
+        return ResponseEntity.ok(response);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<User> getUserById(@PathVariable Long id) {
-        Optional<User> user = userService.findById(id);
-        return user.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<UserResponseDTO> getUserById(@PathVariable Long id) {
+        Optional<UserResponseDTO> userDto = userService.findById(id);
+        return userDto.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @GetMapping
-    public List<User> getAllUsers() {
+    @PreAuthorize("isAuthenticated()")
+    public List<UserResponseDTO> getAllUsers() {
         return userService.findAll();
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<User> updateUser(@PathVariable Long id, @RequestBody User user) {
-        return ResponseEntity.ok(userService.updateUser(id, user));
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<UserResponseDTO> updateUser(@PathVariable Long id, @RequestBody UserCreateDTO userDto) {
+        UserResponseDTO updated = userService.updateUser(id, userDto);
+        return ResponseEntity.ok(updated);
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
         userService.deleteUser(id);
         return ResponseEntity.noContent().build();
