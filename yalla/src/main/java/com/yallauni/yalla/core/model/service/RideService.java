@@ -1,17 +1,15 @@
 package com.yallauni.yalla.core.model.service;
 
-import java.util.List;
-import java.util.Optional;
-
 import com.yallauni.yalla.core.model.Ride;
 import com.yallauni.yalla.core.model.User;
 import com.yallauni.yalla.core.model.Vehicle;
-import com.yallauni.yalla.dto.ride.RideCreateDTO;
-import com.yallauni.yalla.dto.ride.RideResponseDTO;
+
+import java.util.List;
+import java.util.Optional;
 
 public interface RideService {
-    RideResponseDTO createRide(RideCreateDTO dto, Long driverId, Long vehicleId);
 
+    Ride createRide(Ride ride, User driver, Vehicle vehicle);
 
     Optional<Ride> findById(Long id);
 
