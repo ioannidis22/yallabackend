@@ -1,5 +1,6 @@
 package com.yallauni.yalla.core.model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import java.util.List;
@@ -18,6 +19,7 @@ public class User {
     @NotBlank
     @Size(min = 6, max = 100)
     @Column(name = "password", nullable = false, length = 100)
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String password;
 
     public String getPassword() {
@@ -54,7 +56,7 @@ public class User {
 
     @NotNull
     @NotBlank
-    @Size(max = 18)
+    @Size(min = 10, max = 18)
     @Column(name = "mobile_phone_number", nullable = false, length = 18)
     private String mobilePhoneNumber; // E164 format.
 
@@ -64,14 +66,13 @@ public class User {
     @Size(max = 255)
     private String address;
 
-    @NotNull
     @Column(nullable = false)
-    @Size(min = 0, max = 5)
-    private double rating;
+    @DecimalMin("0.0")
+    @DecimalMax("5.0")
+    private double rating = 0.0;
 
-    @NotNull
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
+    @Column(nullable = true)
     private UserGender gender;
 
     @NotNull
@@ -87,14 +88,10 @@ public class User {
         this.userType = userType;
     }
 
-    @NotNull
     @Size(max = 500)
     private String about;
 
-    @NotNull
     private List<String> preferences;
-
-    // ...existing code...
 
     // Getters and setters
     public Long getUserID() {
