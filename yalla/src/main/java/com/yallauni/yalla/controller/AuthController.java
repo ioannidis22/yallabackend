@@ -66,13 +66,6 @@ public class AuthController {
             error.put("message", "Email already in use");
             return ResponseEntity.badRequest().body(error);
         }
-        if (user.getUserType() == User.UserType.DRIVER
-                && (user.getDriverLicense() == null || user.getDriverLicense().trim().isEmpty())) {
-            Map<String, String> error = new HashMap<>();
-            error.put("error", "missing_driver_license");
-            error.put("message", "Driver license is required.");
-            return ResponseEntity.badRequest().body(error);
-        }
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         userRepository.save(user);
         // Issue JWT with user's role
@@ -92,7 +85,7 @@ public class AuthController {
         passwordResetService.requestPasswordReset(request.email());
         // Always return success to prevent email enumeration
         Map<String, String> response = new HashMap<>();
-        response.put("message", "A reset code has been sent, it will be valid for the next 30 minutes.");
+        response.put("message", "If the email exists, a reset code has been sent");
         return ResponseEntity.ok(response);
     }
 

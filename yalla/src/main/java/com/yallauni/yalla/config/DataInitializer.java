@@ -32,7 +32,7 @@ public class DataInitializer implements CommandLineRunner {
 
     private void createDefaultAdminIfNotExists() {
         String adminEmail = "admin@yalla.com";
-
+        
         // Check if admin already exists
         if (userRepository.findByEmailAddress(adminEmail).isPresent()) {
             logger.info("Default admin user already exists");

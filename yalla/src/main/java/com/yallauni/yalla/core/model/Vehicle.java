@@ -10,7 +10,7 @@ import jakarta.validation.constraints.*;
         @Index(name = "idx_vehicle_model", columnList = "model")
 })
 public class Vehicle {
-    @Id
+    @Id 
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "car_id")
     private Long carId;
