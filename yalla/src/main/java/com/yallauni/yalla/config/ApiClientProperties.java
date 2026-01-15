@@ -11,5 +11,4 @@ public record ApiClientProperties(
         // The client ID used to identify the application to the external API
         String clientId,
         // The client secret used for authenticating the application to the external API
-        String clientSecret) {
-}
+        String clientSecret) 
