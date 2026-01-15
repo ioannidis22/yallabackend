@@ -1,14 +1,21 @@
 package com.yallauni.yalla.controller;
 
-
 // Admin entity
 import com.yallauni.yalla.core.model.Admin;
+import com.yallauni.yalla.core.model.Ride;
+import com.yallauni.yalla.core.model.User;
 // Service for admin logic
 import com.yallauni.yalla.core.model.service.AdminService;
+// Repositories for dashboard stats
+import com.yallauni.yalla.core.model.repository.UserRepository;
+import com.yallauni.yalla.core.model.repository.RideRepository;
+import com.yallauni.yalla.core.model.repository.ReviewRepository;
 // DTO for creating admin
 import com.yallauni.yalla.dto.admin.AdminCreateDTO;
 // DTO for returning admin data
 import com.yallauni.yalla.dto.admin.AdminResponseDTO;
+// DTO for dashboard stats
+import com.yallauni.yalla.dto.admin.DashboardDTO;
 
 // Used for HTTP responses
 import org.springframework.http.ResponseEntity;
@@ -25,11 +32,43 @@ import java.util.Optional;
 @RequestMapping("/api/admins") // All endpoints in this controller start with /api/admins
 public class AdminController {
     private final AdminService adminService;
+    private final UserRepository userRepository;
+    private final RideRepository rideRepository;
+    private final ReviewRepository reviewRepository;
 
-    
-    public AdminController(AdminService adminService) {
-        // Inject the admin service
+    public AdminController(AdminService adminService, UserRepository userRepository,
+            RideRepository rideRepository, ReviewRepository reviewRepository) {
         this.adminService = adminService;
+        this.userRepository = userRepository;
+        this.rideRepository = rideRepository;
+        this.reviewRepository = reviewRepository;
+    }
+
+    @GetMapping("/dashboard")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<DashboardDTO> getDashboard() {
+        DashboardDTO dashboard = new DashboardDTO();
+
+        // User counts
+        dashboard.setTotalUsers(userRepository.count());
+        dashboard.setTotalDrivers(userRepository.countByUserType(User.UserType.DRIVER));
+        dashboard.setTotalPassengers(userRepository.countByUserType(User.UserType.PASSENGER));
+
+        // Ride counts
+        dashboard.setTotalRides(rideRepository.count());
+        dashboard.setActiveRides(rideRepository.countByStatus(Ride.RideStatus.IN_PROGRESS));
+        dashboard.setCompletedRides(rideRepository.countByStatus(Ride.RideStatus.COMPLETED));
+
+        // Review stats
+        dashboard.setTotalReviews(reviewRepository.count());
+
+        // Calculate average rating from all reviews
+        List<com.yallauni.yalla.core.model.Review> reviews = reviewRepository.findAll();
+        double avgRating = reviews.isEmpty() ? 0.0
+                : reviews.stream().mapToDouble(r -> r.getRating()).average().orElse(0.0);
+        dashboard.setAverageRating(Math.round(avgRating * 10.0) / 10.0); // Round to 1 decimal
+
+        return ResponseEntity.ok(dashboard);
     }
 
     @PostMapping("/create")

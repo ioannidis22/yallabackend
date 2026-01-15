@@ -11,4 +11,7 @@ import java.util.Optional;
 public interface UserRepository extends JpaRepository<User, Long> {
     // Find a user by their email address
     Optional<User> findByEmailAddress(String emailAddress);
+
+    // Count users by type (DRIVER, PASSENGER, ADMIN)
+    long countByUserType(User.UserType userType);
 }

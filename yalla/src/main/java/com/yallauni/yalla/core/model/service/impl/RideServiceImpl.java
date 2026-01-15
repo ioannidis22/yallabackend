@@ -13,6 +13,7 @@ import com.yallauni.yalla.core.model.service.RideService;
 
 // Marks this class as a Spring service
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -106,16 +107,22 @@ public class RideServiceImpl implements RideService {
     }
 
     @Override
+    @Transactional
     public boolean addPassenger(Long rideId, User passenger) {
         if (rideId == null || passenger == null)
             throw new IllegalArgumentException("Ride ID and passenger must not be null");
         Optional<Ride> rideOpt = rideRepository.findById(rideId);
         if (rideOpt.isPresent()) {
             Ride ride = rideOpt.get();
+
+            // Check if passenger is already in ride (by ID)
+            boolean alreadyInRide = ride.getPassengers().stream()
+                    .anyMatch(p -> p.getUserID().equals(passenger.getUserID()));
+            if (alreadyInRide) {
+                throw new IllegalStateException("Passenger already in ride");
+            }
+
             if (ride.canAddPassenger()) {
-                if (ride.getPassengers().contains(passenger)) {
-                    throw new IllegalStateException("Passenger already in ride");
-                }
                 ride.getPassengers().add(passenger);
                 rideRepository.save(ride);
                 return true;
@@ -128,13 +135,17 @@ public class RideServiceImpl implements RideService {
     }
 
     @Override
+    @Transactional
     public boolean removePassenger(Long rideId, User passenger) {
         if (rideId == null || passenger == null)
             throw new IllegalArgumentException("Ride ID and passenger must not be null");
         Optional<Ride> rideOpt = rideRepository.findById(rideId);
         if (rideOpt.isPresent()) {
             Ride ride = rideOpt.get();
-            if (ride.getPassengers().remove(passenger)) {
+
+            // Find and remove passenger by ID
+            boolean removed = ride.getPassengers().removeIf(p -> p.getUserID().equals(passenger.getUserID()));
+            if (removed) {
                 rideRepository.save(ride);
                 return true;
             } else {

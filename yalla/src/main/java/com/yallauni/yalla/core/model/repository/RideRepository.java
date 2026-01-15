@@ -16,4 +16,7 @@ public interface RideRepository extends JpaRepository<Ride, Long> {
 
     // Find all rides where a user is a passenger
     List<Ride> findByPassengersContaining(User passenger);
+
+    // Count rides by status
+    long countByStatus(Ride.RideStatus status);
 }

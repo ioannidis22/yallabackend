@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonProperty; // for serialization contr
 import jakarta.persistence.*; // JPA annotations
 import jakarta.validation.constraints.*; // validation constraints
 import java.util.List; // list for relationships
+import java.util.Objects; // for equals/hashCode
 
 @Entity
 @Table(name = "app_user", uniqueConstraints = {
@@ -195,17 +196,32 @@ public class User {
         ADMIN
     }
 
-// Driver-specific fields (nullable for non-drivers)
-@Size(max = 30)
-@Column(name = "driver_license", nullable = true)
-private String driverLicense;
+    // Driver-specific fields (nullable for non-drivers)
+    @Size(max = 30)
+    @Column(name = "driver_license", nullable = true)
+    private String driverLicense;
 
-public String getDriverLicense() {
-    return driverLicense;
-}
+    public String getDriverLicense() {
+        return driverLicense;
+    }
 
-public void setDriverLicense(String driverLicense) {
-    this.driverLicense = driverLicense;
-}
+    public void setDriverLicense(String driverLicense) {
+        this.driverLicense = driverLicense;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
+        User user = (User) o;
+        return userID != null && Objects.equals(userID, user.userID);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(userID);
+    }
 
 }
