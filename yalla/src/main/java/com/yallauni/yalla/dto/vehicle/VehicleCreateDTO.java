@@ -1,3 +1,4 @@
+// DTO for creating a vehicle (student-style comment)
 package com.yallauni.yalla.dto.vehicle;
 
 import jakarta.validation.constraints.*;

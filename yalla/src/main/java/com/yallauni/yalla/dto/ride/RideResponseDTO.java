@@ -1,3 +1,4 @@
+// DTO for ride response
 package com.yallauni.yalla.dto.ride;
 
 public class RideResponseDTO {
@@ -5,7 +6,6 @@ public class RideResponseDTO {
     private String origin;
     private String destination;
     private String date;
-    // Προσθέστε και άλλα πεδία αν χρειάζεται
 
     public Long getId() {
         return id;

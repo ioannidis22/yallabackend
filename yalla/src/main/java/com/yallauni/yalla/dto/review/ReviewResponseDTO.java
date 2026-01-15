@@ -1,11 +1,11 @@
 package com.yallauni.yalla.dto.review;
 
 public class ReviewResponseDTO {
-    private Long id;
-    private Long rideId;
-    private Long reviewerId;
-    private double rating;
-    private String comment;
+    private Long id; // Unique ID of the review
+    private Long rideId; // ID of the ride being reviewed
+    private Long reviewerId; // ID of the user who wrote the review
+    private double rating; // Rating value (1.0 - 5.0)
+    private String comment; // Optional comment
 
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }

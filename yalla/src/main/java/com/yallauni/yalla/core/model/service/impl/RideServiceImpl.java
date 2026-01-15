@@ -1,11 +1,17 @@
 package com.yallauni.yalla.core.model.service.impl;
 
+// Ride entity (already commented elsewhere)
 import com.yallauni.yalla.core.model.Ride;
+// User entity (already commented elsewhere)
 import com.yallauni.yalla.core.model.User;
+// Vehicle entity (already commented elsewhere)
 import com.yallauni.yalla.core.model.Vehicle;
+// Repository for ride data (already commented elsewhere)
 import com.yallauni.yalla.core.model.repository.RideRepository;
+// Ride service interface
 import com.yallauni.yalla.core.model.service.RideService;
 
+// Marks this class as a Spring service
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -21,6 +27,7 @@ public class RideServiceImpl implements RideService {
 
     @Override
     public Ride createRide(Ride ride, User driver, Vehicle vehicle) {
+        // Create a new ride with driver and vehicle, set defaults if needed
         if (ride == null || driver == null || vehicle == null) {
             throw new IllegalArgumentException("Ride, driver, and vehicle must not be null");
         }
@@ -44,6 +51,7 @@ public class RideServiceImpl implements RideService {
 
     @Override
     public Optional<Ride> findById(Long id) {
+        // Find ride by id
         if (id == null)
             throw new IllegalArgumentException("Ride ID must not be null");
         return rideRepository.findById(id);
@@ -51,6 +59,7 @@ public class RideServiceImpl implements RideService {
 
     @Override
     public List<Ride> findByDriver(User driver) {
+        // Find all rides for a specific driver
         if (driver == null)
             throw new IllegalArgumentException("Driver must not be null");
         return rideRepository.findByDriver(driver);
@@ -58,6 +67,7 @@ public class RideServiceImpl implements RideService {
 
     @Override
     public List<Ride> findByPassenger(User passenger) {
+        // Find all rides where a user is a passenger
         if (passenger == null)
             throw new IllegalArgumentException("Passenger must not be null");
         return rideRepository.findByPassengersContaining(passenger);

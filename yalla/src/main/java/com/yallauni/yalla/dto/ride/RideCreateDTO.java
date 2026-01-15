@@ -1,19 +1,17 @@
+// DTO for creating a ride
 package com.yallauni.yalla.dto.ride;
 
 import jakarta.validation.constraints.*;
 
 public class RideCreateDTO {
-
-    @NotBlank
+    @NotBlank // The starting point of the ride
     private String origin;
 
-    @NotBlank
+    @NotBlank // The destination of the ride
     private String destination;
 
-    @NotBlank
+    @NotBlank // The date of the ride 
     private String date;
-
-
 
     public String getOrigin() {
         return origin;

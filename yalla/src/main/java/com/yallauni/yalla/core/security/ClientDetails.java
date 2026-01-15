@@ -1,6 +1,7 @@
+// Immutable details of an API client (record, student-style comment)
 package com.yallauni.yalla.core.security;
 
-import java.util.Collection;
+import java.util.Collection; // list of roles
 
 /**
  * Immutable details of an API client.

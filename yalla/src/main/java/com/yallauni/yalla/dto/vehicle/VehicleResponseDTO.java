@@ -1,3 +1,4 @@
+// DTO for vehicle response
 package com.yallauni.yalla.dto.vehicle;
 
 public class VehicleResponseDTO {
@@ -7,7 +8,7 @@ public class VehicleResponseDTO {
     private String licensePlate;
     private String color;
     private int capacity;
-    // Προσθέστε και άλλα πεδία αν χρειάζεται
+    // Add more fields if needed
 
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }

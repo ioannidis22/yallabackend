@@ -1,3 +1,4 @@
+// DTO for admin response (student-style comment)
 package com.yallauni.yalla.dto.admin;
 
 public class AdminResponseDTO {

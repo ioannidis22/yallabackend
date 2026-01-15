@@ -1,15 +1,15 @@
+// Dummy implementation of ClientDetailsService with properties (not for production, student-style comment)
 package com.yallauni.yalla.core.security;
 
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.beans.factory.annotation.Value; // inject properties
+import org.springframework.security.crypto.password.PasswordEncoder; // hash
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
 
 /**
- * Simple implementation of {@link ClientDetailsService} using application
- * properties.
+ * Simple implementation of {@link ClientDetailsService} using application properties.
  * In production, you would typically store clients in a database.
  */
 @Service

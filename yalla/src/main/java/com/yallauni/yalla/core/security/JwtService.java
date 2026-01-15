@@ -1,11 +1,12 @@
+// Service for issuing and parsing JWT tokens
 package com.yallauni.yalla.core.security;
 
-import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Claims; // JWT claims
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
 
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.annotation.Value; // inject properties
 import org.springframework.stereotype.Service;
 
 import java.nio.charset.StandardCharsets;

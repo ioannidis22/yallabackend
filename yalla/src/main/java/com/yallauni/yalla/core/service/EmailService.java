@@ -1,3 +1,4 @@
+// Service for sending emails (student-style comment)
 package com.yallauni.yalla.core.service;
 
 import org.slf4j.Logger;

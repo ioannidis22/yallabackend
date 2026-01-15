@@ -1,9 +1,9 @@
-
+// Ride entity for each trip
 package com.yallauni.yalla.core.model;
 
-import jakarta.persistence.*;
-import jakarta.validation.constraints.*;
-import java.util.List;
+import jakarta.persistence.*; // JPA annotations
+import jakarta.validation.constraints.*; // validation constraints
+import java.util.List; // lists for relationships
 
 @Entity
 @Table(name = "ride", indexes = {

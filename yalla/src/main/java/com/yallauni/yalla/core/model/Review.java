@@ -1,7 +1,8 @@
+// Review entity for ride ratings (student-style comment)
 package com.yallauni.yalla.core.model;
 
-import jakarta.persistence.*;
-import jakarta.validation.constraints.*;
+import jakarta.persistence.*; // JPA annotations
+import jakarta.validation.constraints.*; // validation constraints
 
 @Entity
 @Table(name = "review")
@@ -26,7 +27,7 @@ public class Review {
     @Size(max = 500)
     private String comment;
 
-    // Getters and setters
+    // Typical getters and setters
     public Long getId() {
         return id;
     }

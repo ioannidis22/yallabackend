@@ -18,13 +18,14 @@ import org.springframework.web.server.ResponseStatusException;
 
 /**
  * REST controller for API client authentication (machine-to-machine).
+ * Handles authentication requests from API clients and issues JWT tokens.
  */
 @RestController
 @RequestMapping(value = "/api/v1/auth", produces = MediaType.APPLICATION_JSON_VALUE)
 public class ClientAuthResource {
 
-    private final ClientDetailsService clientDetailsService;
-    private final JwtService jwtService;
+    private final ClientDetailsService clientDetailsService; // Service for authenticating API clients
+    private final JwtService jwtService; // Service for issuing JWT tokens
 
     public ClientAuthResource(final ClientDetailsService clientDetailsService,
             final JwtService jwtService) {
@@ -40,6 +41,9 @@ public class ClientAuthResource {
 
     /**
      * Authenticates an API client and returns a JWT token.
+     * @param request The client credentials
+     * @return JWT token response if authentication is successful
+     * @throws ResponseStatusException if credentials are invalid
      */
     @PostMapping("/client-tokens")
     public ClientTokenResponse clientToken(@RequestBody @Valid ClientTokenRequest request) {

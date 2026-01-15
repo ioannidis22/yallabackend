@@ -3,21 +3,17 @@ package com.yallauni.yalla.dto.user;
 import jakarta.validation.constraints.*;
 
 public class UserCreateDTO {
-
-    @NotBlank
-    @Size(min = 3, max = 50)
+    @NotBlank // The username for the new user
+    @Size(min = 3, max = 50) // Username must be between 3 and 50 characters
     private String username;
 
-    @NotBlank
-    @Email
+    @NotBlank // The user's email address
+    @Email // Must be a valid email format
     private String email;
 
-    @NotBlank
-    @Size(min = 8, max = 100)
+    @NotBlank // The user's password
+    @Size(min = 8, max = 100) // Password must be between 8 and 100 characters
     private String password;
-
-
-
 
     public String getUsername() {
         return username;

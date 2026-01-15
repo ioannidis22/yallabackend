@@ -1,11 +1,9 @@
+// Entity for password reset tokens
 package com.yallauni.yalla.core.model;
 
-import jakarta.persistence.*;
-import java.time.Instant;
+import jakarta.persistence.*; // JPA annotations
+import java.time.Instant; // for timestamps
 
-/**
- * Password reset token entity.
- */
 @Entity
 @Table(name = "password_reset_token")
 public class PasswordResetToken {

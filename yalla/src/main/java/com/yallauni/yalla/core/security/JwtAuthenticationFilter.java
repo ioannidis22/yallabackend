@@ -1,6 +1,7 @@
+// Filter for authentication with JWT (REST API, student-style comment)
 package com.yallauni.yalla.core.security;
 
-import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Claims; // JWT claims
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;

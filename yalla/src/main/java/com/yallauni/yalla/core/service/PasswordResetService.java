@@ -1,3 +1,4 @@
+// Service for handling password reset operations (student-style comment)
 package com.yallauni.yalla.core.service;
 
 import com.yallauni.yalla.core.model.PasswordResetToken;

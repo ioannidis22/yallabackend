@@ -1,10 +1,10 @@
 package com.yallauni.yalla.dto.user;
 
 public class UserResponseDTO {
-    private Long id;
-    private String username;
-    private String email;
-    // Προσθέστε και άλλα πεδία αν χρειάζεται
+    private Long id; // Unique ID of the user
+    private String username; // Username of the user
+    private String email; // Email address of the user
+    // Add more fields if needed
 
     public Long getId() {
         return id;

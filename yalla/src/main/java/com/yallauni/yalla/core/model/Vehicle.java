@@ -1,8 +1,8 @@
-
+// Vehicle entity for user cars (student-style comment)
 package com.yallauni.yalla.core.model;
 
-import jakarta.persistence.*;
-import jakarta.validation.constraints.*;
+import jakarta.persistence.*; // JPA annotations
+import jakarta.validation.constraints.*; // validation constraints
 
 @Entity
 @Table(name = "vehicle", indexes = {
@@ -44,7 +44,7 @@ public class Vehicle {
     @JoinColumn(name = "driver_id", referencedColumnName = "id", nullable = false, unique = true)
     private User driver;
 
-    // Getters and setters
+    // Typical getters and setters
     public Long getCarId() {
         return carId;
     }

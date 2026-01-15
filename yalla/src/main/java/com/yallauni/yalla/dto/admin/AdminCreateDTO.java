@@ -1,3 +1,4 @@
+// DTO for creating an admin (student-style comment)
 package com.yallauni.yalla.dto.admin;
 
 import jakarta.validation.constraints.*;
