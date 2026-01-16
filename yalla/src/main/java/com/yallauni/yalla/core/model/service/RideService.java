@@ -27,6 +27,9 @@ public interface RideService {
     // Return all rides
     List<Ride> findAll();
 
+    // Find all rides by status
+    List<Ride> findByStatus(Ride.RideStatus status);
+
     // Update ride fields
     Ride updateRide(Long id, Ride ride);
 

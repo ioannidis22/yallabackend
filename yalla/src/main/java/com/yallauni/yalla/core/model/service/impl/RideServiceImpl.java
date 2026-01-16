@@ -40,7 +40,7 @@ public class RideServiceImpl implements RideService {
 
         // Set default status if not provided
         if (ride.getStatus() == null) {
-            ride.setStatus(Ride.RideStatus.REQUESTED);
+            ride.setStatus(Ride.RideStatus.SCHEDULED);
         }
         // Set default price if not provided
         if (ride.getPrice() == null) {
@@ -80,6 +80,13 @@ public class RideServiceImpl implements RideService {
     }
 
     @Override
+    public List<Ride> findByStatus(Ride.RideStatus status) {
+        if (status == null)
+            throw new IllegalArgumentException("Status must not be null");
+        return rideRepository.findByStatus(status);
+    }
+
+    @Override
     public Ride updateRide(Long id, Ride rideUpdate) {
         if (id == null || rideUpdate == null)
             throw new IllegalArgumentException("Ride and ID must not be null");
@@ -93,6 +100,9 @@ public class RideServiceImpl implements RideService {
         }
         if (rideUpdate.getDestination() != null) {
             existing.setDestination(rideUpdate.getDestination());
+        }
+        if (rideUpdate.getStatus() != null) {
+            existing.setStatus(rideUpdate.getStatus());
         }
         // Driver, vehicle, and passengers remain unchanged
 

@@ -1,46 +1,42 @@
 package com.yallauni.yalla.controller;
 
-
-// User entity (already commented elsewhere)
 import com.yallauni.yalla.core.model.User;
-// Vehicle entity
 import com.yallauni.yalla.core.model.Vehicle;
-// Service for vehicle logic
 import com.yallauni.yalla.core.model.service.VehicleService;
-// DTO for creating vehicle
+import com.yallauni.yalla.core.model.repository.UserRepository;
 import com.yallauni.yalla.dto.vehicle.VehicleCreateDTO;
-// DTO for returning vehicle data
 import com.yallauni.yalla.dto.vehicle.VehicleResponseDTO;
 
-
-// Used for HTTP responses (already commented elsewhere)
 import org.springframework.http.ResponseEntity;
-// Spring REST controller annotations (already commented elsewhere)
 import org.springframework.web.bind.annotation.*;
-
-// Annotation for method-level security (already commented elsewhere)
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.List;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/api/vehicles") // All endpoints in this controller start with /api/vehicles
+@RequestMapping("/api/vehicles")
 public class VehicleController {
     private final VehicleService vehicleService;
+    private final UserRepository userRepository;
 
-    
-    public VehicleController(VehicleService vehicleService) {
-        // Inject the vehicle service
+    public VehicleController(VehicleService vehicleService, UserRepository userRepository) {
         this.vehicleService = vehicleService;
+        this.userRepository = userRepository;
     }
 
+    // Register vehicle - uses authenticated user as driver
     @PostMapping("/register")
     @PreAuthorize("hasRole('DRIVER') or hasRole('ADMIN')")
-    public ResponseEntity<VehicleResponseDTO> registerVehicle(@RequestBody VehicleCreateDTO vehicleDto, @RequestParam Long driverId) {
-        // Register a new vehicle for a driver and return the response DTO
-        User driver = new User();
-        driver.setUserID(driverId);
+    public ResponseEntity<?> registerVehicle(@RequestBody VehicleCreateDTO vehicleDto,
+            @AuthenticationPrincipal UserDetails userDetails) {
+        User driver = userRepository.findByEmailAddress(userDetails.getUsername()).orElse(null);
+        if (driver == null) {
+            return ResponseEntity.status(401).body("User not found");
+        }
+
         Vehicle vehicle = new Vehicle();
         vehicle.setMake(vehicleDto.getMake());
         vehicle.setModel(vehicleDto.getModel());
@@ -49,80 +45,124 @@ public class VehicleController {
         vehicle.setCapacity(vehicleDto.getCapacity());
         vehicle.setDriver(driver);
         Vehicle saved = vehicleService.registerVehicle(vehicle, driver);
-        VehicleResponseDTO response = new VehicleResponseDTO();
-        response.setId(saved.getCarId());
-        response.setMake(saved.getMake());
-        response.setModel(saved.getModel());
-        response.setLicensePlate(saved.getLicensePlate());
-        response.setColor(saved.getColor());
-        response.setCapacity(saved.getCapacity());
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok(mapToDto(saved));
     }
 
+    // Get my vehicles - driver's own vehicles
+    @GetMapping("/my")
+    @PreAuthorize("hasRole('DRIVER') or hasRole('ADMIN')")
+    public ResponseEntity<?> getMyVehicles(@AuthenticationPrincipal UserDetails userDetails) {
+        User driver = userRepository.findByEmailAddress(userDetails.getUsername()).orElse(null);
+        if (driver == null) {
+            return ResponseEntity.status(401).body("User not found");
+        }
+
+        List<Vehicle> vehicles = vehicleService.findByDriver(driver);
+        return ResponseEntity.ok(vehicles.stream().map(this::mapToDto).toList());
+    }
+
+    // Get vehicle by ID - only own vehicle or admin
     @GetMapping("/{id}")
     @PreAuthorize("isAuthenticated()")
-    public ResponseEntity<VehicleResponseDTO> getVehicleById(@PathVariable Long id) {
-        // Find vehicle by id and return as DTO, or 404 if not found
-        Optional<Vehicle> vehicle = vehicleService.findById(id);
-        if (vehicle.isPresent()) {
-            Vehicle v = vehicle.get();
-            VehicleResponseDTO dto = new VehicleResponseDTO();
-            dto.setId(v.getCarId());
-            dto.setMake(v.getMake());
-            dto.setModel(v.getModel());
-            dto.setLicensePlate(v.getLicensePlate());
-            dto.setColor(v.getColor());
-            dto.setCapacity(v.getCapacity());
-            return ResponseEntity.ok(dto);
-        } else {
+    public ResponseEntity<?> getVehicleById(@PathVariable Long id, @AuthenticationPrincipal UserDetails userDetails) {
+        User currentUser = userRepository.findByEmailAddress(userDetails.getUsername()).orElse(null);
+        if (currentUser == null) {
+            return ResponseEntity.status(401).body("User not found");
+        }
+
+        Optional<Vehicle> vehicleOpt = vehicleService.findById(id);
+        if (vehicleOpt.isEmpty()) {
             return ResponseEntity.notFound().build();
         }
+
+        Vehicle vehicle = vehicleOpt.get();
+        boolean isAdmin = currentUser.getUserType() == User.UserType.ADMIN;
+        boolean isOwner = vehicle.getDriver() != null
+                && vehicle.getDriver().getUserID().equals(currentUser.getUserID());
+
+        if (!isOwner && !isAdmin) {
+            return ResponseEntity.status(403).body("Access denied: You can only view your own vehicles");
+        }
+
+        return ResponseEntity.ok(mapToDto(vehicle));
     }
 
+    // Get all vehicles - admin only
     @GetMapping
-    @PreAuthorize("isAuthenticated()")
+    @PreAuthorize("hasRole('ADMIN')")
     public List<VehicleResponseDTO> getAllVehicles() {
-        // Return all vehicles as a list of DTOs
-        List<Vehicle> vehicles = vehicleService.findAll();
-        return vehicles.stream().map(v -> {
-            VehicleResponseDTO dto = new VehicleResponseDTO();
-            dto.setId(v.getCarId());
-            dto.setMake(v.getMake());
-            dto.setModel(v.getModel());
-            dto.setLicensePlate(v.getLicensePlate());
-            dto.setColor(v.getColor());
-            dto.setCapacity(v.getCapacity());
-            return dto;
-        }).toList();
+        return vehicleService.findAll().stream().map(this::mapToDto).toList();
     }
 
+    // Update vehicle - only own vehicle or admin
     @PutMapping("/{id}")
     @PreAuthorize("hasRole('DRIVER') or hasRole('ADMIN')")
-    public ResponseEntity<VehicleResponseDTO> updateVehicle(@PathVariable Long id, @RequestBody VehicleCreateDTO vehicleDto) {
-        // Update an existing vehicle with new data
+    public ResponseEntity<?> updateVehicle(@PathVariable Long id, @RequestBody VehicleCreateDTO vehicleDto,
+            @AuthenticationPrincipal UserDetails userDetails) {
+        User currentUser = userRepository.findByEmailAddress(userDetails.getUsername()).orElse(null);
+        if (currentUser == null) {
+            return ResponseEntity.status(401).body("User not found");
+        }
+
+        Optional<Vehicle> vehicleOpt = vehicleService.findById(id);
+        if (vehicleOpt.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+
+        Vehicle existing = vehicleOpt.get();
+        boolean isAdmin = currentUser.getUserType() == User.UserType.ADMIN;
+        boolean isOwner = existing.getDriver() != null
+                && existing.getDriver().getUserID().equals(currentUser.getUserID());
+
+        if (!isOwner && !isAdmin) {
+            return ResponseEntity.status(403).body("Access denied: You can only update your own vehicles");
+        }
+
         Vehicle vehicle = new Vehicle();
-        vehicle.setCarId(id);
         vehicle.setMake(vehicleDto.getMake());
         vehicle.setModel(vehicleDto.getModel());
         vehicle.setLicensePlate(vehicleDto.getLicensePlate());
         vehicle.setColor(vehicleDto.getColor());
         vehicle.setCapacity(vehicleDto.getCapacity());
         Vehicle updated = vehicleService.updateVehicle(id, vehicle);
-        VehicleResponseDTO response = new VehicleResponseDTO();
-        response.setId(updated.getCarId());
-        response.setMake(updated.getMake());
-        response.setModel(updated.getModel());
-        response.setLicensePlate(updated.getLicensePlate());
-        response.setColor(updated.getColor());
-        response.setCapacity(updated.getCapacity());
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok(mapToDto(updated));
     }
 
+    // Delete vehicle - only own vehicle or admin
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('DRIVER') or hasRole('ADMIN')")
-    public ResponseEntity<Void> deleteVehicle(@PathVariable Long id) {
-        // Delete vehicle by id
+    public ResponseEntity<?> deleteVehicle(@PathVariable Long id, @AuthenticationPrincipal UserDetails userDetails) {
+        User currentUser = userRepository.findByEmailAddress(userDetails.getUsername()).orElse(null);
+        if (currentUser == null) {
+            return ResponseEntity.status(401).body("User not found");
+        }
+
+        Optional<Vehicle> vehicleOpt = vehicleService.findById(id);
+        if (vehicleOpt.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+
+        Vehicle existing = vehicleOpt.get();
+        boolean isAdmin = currentUser.getUserType() == User.UserType.ADMIN;
+        boolean isOwner = existing.getDriver() != null
+                && existing.getDriver().getUserID().equals(currentUser.getUserID());
+
+        if (!isOwner && !isAdmin) {
+            return ResponseEntity.status(403).body("Access denied: You can only delete your own vehicles");
+        }
+
         vehicleService.deleteVehicle(id);
         return ResponseEntity.noContent().build();
+    }
+
+    private VehicleResponseDTO mapToDto(Vehicle v) {
+        VehicleResponseDTO dto = new VehicleResponseDTO();
+        dto.setId(v.getCarId());
+        dto.setMake(v.getMake());
+        dto.setModel(v.getModel());
+        dto.setLicensePlate(v.getLicensePlate());
+        dto.setColor(v.getColor());
+        dto.setCapacity(v.getCapacity());
+        return dto;
     }
 }

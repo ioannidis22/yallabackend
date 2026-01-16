@@ -103,10 +103,10 @@ public class Ride {
     }
 
     public enum RideStatus {
-        REQUESTED,
-        IN_PROGRESS,
-        COMPLETED,
-        CANCELLED
+        SCHEDULED, // Ride created, waiting to start
+        IN_PROGRESS, // Driver started the ride
+        COMPLETED, // Driver completed the ride
+        CANCELLED // Ride cancelled
     }
 
     public List<User> getPassengers() {

@@ -1,70 +1,109 @@
 package com.yallauni.yalla.controller;
 
-
-
-// Service for user logic
+import com.yallauni.yalla.core.model.User;
+import com.yallauni.yalla.core.model.repository.UserRepository;
 import com.yallauni.yalla.core.model.service.UserService;
-// DTO for creating user
 import com.yallauni.yalla.dto.user.UserCreateDTO;
-// DTO for returning user data
 import com.yallauni.yalla.dto.user.UserResponseDTO;
 
-// Used for HTTP responses (already commented elsewhere)
 import org.springframework.http.ResponseEntity;
-// Spring REST controller annotations (already commented elsewhere)
 import org.springframework.web.bind.annotation.*;
-
-// Annotation for method-level security (already commented elsewhere)
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.List;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/api/users") // All endpoints in this controller start with /api/users
+@RequestMapping("/api/users")
 public class UserController {
     private final UserService userService;
+    private final UserRepository userRepository;
 
-    
-    public UserController(UserService userService) {
-        // Inject the user service
+    public UserController(UserService userService, UserRepository userRepository) {
         this.userService = userService;
+        this.userRepository = userRepository;
     }
 
     @PostMapping("/register")
     public ResponseEntity<UserResponseDTO> registerUser(@RequestBody UserCreateDTO userDto) {
-        // Register a new user and return the response DTO
         UserResponseDTO response = userService.registerUser(userDto);
         return ResponseEntity.ok(response);
     }
 
+    // Get current user's own profile
+    @GetMapping("/me")
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<UserResponseDTO> getMyProfile(@AuthenticationPrincipal UserDetails userDetails) {
+        Optional<UserResponseDTO> userDto = userService.findByEmail(userDetails.getUsername());
+        return userDto.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
+    // Get user by ID - only own profile or admin
     @GetMapping("/{id}")
     @PreAuthorize("isAuthenticated()")
-    public ResponseEntity<UserResponseDTO> getUserById(@PathVariable Long id) {
-        // Find user by id and return as DTO, or 404 if not found
+    public ResponseEntity<?> getUserById(@PathVariable Long id, @AuthenticationPrincipal UserDetails userDetails) {
+        User currentUser = userRepository.findByEmailAddress(userDetails.getUsername()).orElse(null);
+        if (currentUser == null) {
+            return ResponseEntity.status(401).body("User not found");
+        }
+
+        boolean isAdmin = currentUser.getUserType() == User.UserType.ADMIN;
+        boolean isOwnProfile = currentUser.getUserID().equals(id);
+
+        if (!isOwnProfile && !isAdmin) {
+            return ResponseEntity.status(403).body("Access denied: You can only view your own profile");
+        }
+
         Optional<UserResponseDTO> userDto = userService.findById(id);
         return userDto.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
+    // Get all users - admin only
     @GetMapping
-    @PreAuthorize("isAuthenticated()")
+    @PreAuthorize("hasRole('ADMIN')")
     public List<UserResponseDTO> getAllUsers() {
-        // Return all users as a list of DTOs
         return userService.findAll();
     }
 
+    // Update user - only own profile or admin
     @PutMapping("/{id}")
     @PreAuthorize("isAuthenticated()")
-    public ResponseEntity<UserResponseDTO> updateUser(@PathVariable Long id, @RequestBody UserCreateDTO userDto) {
-        // Update an existing user with new data
+    public ResponseEntity<?> updateUser(@PathVariable Long id, @RequestBody UserCreateDTO userDto,
+            @AuthenticationPrincipal UserDetails userDetails) {
+        User currentUser = userRepository.findByEmailAddress(userDetails.getUsername()).orElse(null);
+        if (currentUser == null) {
+            return ResponseEntity.status(401).body("User not found");
+        }
+
+        boolean isAdmin = currentUser.getUserType() == User.UserType.ADMIN;
+        boolean isOwnProfile = currentUser.getUserID().equals(id);
+
+        if (!isOwnProfile && !isAdmin) {
+            return ResponseEntity.status(403).body("Access denied: You can only update your own profile");
+        }
+
         UserResponseDTO updated = userService.updateUser(id, userDto);
         return ResponseEntity.ok(updated);
     }
 
+    // Delete user - only own profile or admin
     @DeleteMapping("/{id}")
     @PreAuthorize("isAuthenticated()")
-    public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
-        // Delete user by id
+    public ResponseEntity<?> deleteUser(@PathVariable Long id, @AuthenticationPrincipal UserDetails userDetails) {
+        User currentUser = userRepository.findByEmailAddress(userDetails.getUsername()).orElse(null);
+        if (currentUser == null) {
+            return ResponseEntity.status(401).body("User not found");
+        }
+
+        boolean isAdmin = currentUser.getUserType() == User.UserType.ADMIN;
+        boolean isOwnProfile = currentUser.getUserID().equals(id);
+
+        if (!isOwnProfile && !isAdmin) {
+            return ResponseEntity.status(403).body("Access denied: You can only delete your own profile");
+        }
+
         userService.deleteUser(id);
         return ResponseEntity.noContent().build();
     }

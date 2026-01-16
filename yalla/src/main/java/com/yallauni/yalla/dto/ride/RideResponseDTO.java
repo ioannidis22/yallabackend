@@ -6,6 +6,8 @@ public class RideResponseDTO {
     private String origin;
     private String destination;
     private String date;
+    private String status;
+    private int passengerCount;
 
     public Long getId() {
         return id;
@@ -37,5 +39,21 @@ public class RideResponseDTO {
 
     public void setDate(String date) {
         this.date = date;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public int getPassengerCount() {
+        return passengerCount;
+    }
+
+    public void setPassengerCount(int passengerCount) {
+        this.passengerCount = passengerCount;
     }
 }
