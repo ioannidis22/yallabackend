@@ -64,10 +64,6 @@ public class SecurityConfig {
                                                 .requestMatchers("/api/auth/**").permitAll()
                                                 .requestMatchers("/api/v1/auth/**").permitAll()
                                                 .requestMatchers("/api/users/register").permitAll()
-                                                // Payment config (publishable key)
-                                                .requestMatchers("/api/payments/config").permitAll()
-                                                // Stripe webhook (verified by signature, not JWT)
-                                                .requestMatchers("/api/payments/webhook").permitAll()
                                                 // All other API endpoints require authentication
                                                 .anyRequest().authenticated())
                                 .exceptionHandling(exh -> exh

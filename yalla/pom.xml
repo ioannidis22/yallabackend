@@ -117,12 +117,6 @@
 			<artifactId>spring-boot-starter-webmvc-test</artifactId>
 			<scope>test</scope>
 		</dependency>
-		<!-- Stripe Java SDK for payment integration -->
-		<dependency>
-			<groupId>com.stripe</groupId>
-			<artifactId>stripe-java</artifactId>
-			<version>24.10.0</version>
-		</dependency>
 		<!-- Jakarta Bean Validation API -->
 		<dependency>
 			<groupId>jakarta.validation</groupId>
