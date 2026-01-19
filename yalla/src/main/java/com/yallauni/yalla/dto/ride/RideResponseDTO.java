@@ -5,7 +5,7 @@ import java.util.List;
 
 public class RideResponseDTO {
     private Long id;
-    private String origin;
+    private String startingPoint;
     private String destination;
     private String departureTime;
     private String status;
@@ -66,12 +66,12 @@ public class RideResponseDTO {
         this.id = id;
     }
 
-    public String getOrigin() {
-        return origin;
+    public String getStartingPoint() {
+        return startingPoint;
     }
 
-    public void setOrigin(String origin) {
-        this.origin = origin;
+    public void setStartingPoint(String startingPoint) {
+        this.startingPoint = startingPoint;
     }
 
     public String getDestination() {

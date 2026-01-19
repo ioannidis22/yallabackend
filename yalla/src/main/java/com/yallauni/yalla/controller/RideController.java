@@ -17,6 +17,7 @@ import com.yallauni.yalla.dto.driver.DriverStatsDTO;
 import jakarta.validation.Valid;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -30,6 +31,7 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/rides")
+@Transactional(readOnly = true)
 public class RideController {
     private final RideService rideService;
     private final UserRepository userRepository;
@@ -50,9 +52,9 @@ public class RideController {
     // Create ride - driver uses their own account and vehicle
     @PostMapping("/create")
     @PreAuthorize("hasRole('DRIVER') or hasRole('ADMIN')")
+    @Transactional
     public ResponseEntity<?> createRide(
             @Valid @RequestBody RideCreateDTO dto,
-            @RequestParam Long vehicleId,
             @AuthenticationPrincipal UserDetails userDetails) {
 
         User driver = userRepository.findByEmailAddress(userDetails.getUsername()).orElse(null);
@@ -60,7 +62,7 @@ public class RideController {
             return ResponseEntity.status(401).body("User not found");
         }
 
-        Vehicle vehicle = vehicleRepository.findById(vehicleId).orElse(null);
+        Vehicle vehicle = vehicleRepository.findById(dto.getVehicleId()).orElse(null);
         if (vehicle == null) {
             return ResponseEntity.badRequest().body("Vehicle not found");
         }
@@ -72,7 +74,7 @@ public class RideController {
         }
 
         Ride ride = new Ride();
-        ride.setStartingPoint(dto.getOrigin());
+        ride.setStartingPoint(dto.getStartingPoint());
         ride.setDestination(dto.getDestination());
 
         // Set price
@@ -153,6 +155,7 @@ public class RideController {
     // Update ride - only driver of ride or admin
     @PutMapping("/{id}")
     @PreAuthorize("hasRole('DRIVER') or hasRole('ADMIN')")
+    @Transactional
     public ResponseEntity<?> updateRide(@PathVariable Long id, @RequestBody RideCreateDTO dto,
             @AuthenticationPrincipal UserDetails userDetails) {
         User currentUser = userRepository.findByEmailAddress(userDetails.getUsername()).orElse(null);
@@ -175,8 +178,8 @@ public class RideController {
         }
 
         // Update fields if provided
-        if (dto.getOrigin() != null) {
-            existing.setStartingPoint(dto.getOrigin());
+        if (dto.getStartingPoint() != null) {
+            existing.setStartingPoint(dto.getStartingPoint());
         }
         if (dto.getDestination() != null) {
             existing.setDestination(dto.getDestination());
@@ -201,6 +204,7 @@ public class RideController {
     // Delete ride - only driver of ride or admin
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('DRIVER') or hasRole('ADMIN')")
+    @Transactional
     public ResponseEntity<?> deleteRide(@PathVariable Long id, @AuthenticationPrincipal UserDetails userDetails) {
         User currentUser = userRepository.findByEmailAddress(userDetails.getUsername()).orElse(null);
         if (currentUser == null) {
@@ -227,6 +231,7 @@ public class RideController {
 
     @PostMapping("/{rideId}/join")
     @PreAuthorize("isAuthenticated()")
+    @Transactional
     public ResponseEntity<?> joinRide(@PathVariable Long rideId, @AuthenticationPrincipal UserDetails userDetails) {
         try {
             User passenger = userRepository.findByEmailAddress(userDetails.getUsername())
@@ -241,6 +246,7 @@ public class RideController {
 
     @PostMapping("/{rideId}/leave")
     @PreAuthorize("isAuthenticated()")
+    @Transactional
     public ResponseEntity<?> leaveRide(@PathVariable Long rideId, @AuthenticationPrincipal UserDetails userDetails) {
         try {
             User passenger = userRepository.findByEmailAddress(userDetails.getUsername())
@@ -257,6 +263,7 @@ public class RideController {
 
     @PostMapping("/{id}/start")
     @PreAuthorize("hasRole('DRIVER') or hasRole('ADMIN')")
+    @Transactional
     public ResponseEntity<?> startRide(@PathVariable Long id, @AuthenticationPrincipal UserDetails userDetails) {
         User currentUser = userRepository.findByEmailAddress(userDetails.getUsername()).orElse(null);
         if (currentUser == null) {
@@ -288,6 +295,7 @@ public class RideController {
 
     @PostMapping("/{id}/complete")
     @PreAuthorize("hasRole('DRIVER') or hasRole('ADMIN')")
+    @Transactional
     public ResponseEntity<?> completeRide(@PathVariable Long id, @AuthenticationPrincipal UserDetails userDetails) {
         User currentUser = userRepository.findByEmailAddress(userDetails.getUsername()).orElse(null);
         if (currentUser == null) {
@@ -319,6 +327,7 @@ public class RideController {
 
     @PostMapping("/{id}/cancel")
     @PreAuthorize("hasRole('DRIVER') or hasRole('ADMIN')")
+    @Transactional
     public ResponseEntity<?> cancelRide(@PathVariable Long id, @AuthenticationPrincipal UserDetails userDetails) {
         User currentUser = userRepository.findByEmailAddress(userDetails.getUsername()).orElse(null);
         if (currentUser == null) {
@@ -400,7 +409,7 @@ public class RideController {
     private RideResponseDTO mapToDto(Ride ride) {
         RideResponseDTO dto = new RideResponseDTO();
         dto.setId(ride.getRideId());
-        dto.setOrigin(ride.getStartingPoint());
+        dto.setStartingPoint(ride.getStartingPoint());
         dto.setDestination(ride.getDestination());
         dto.setStatus(ride.getStatus() != null ? ride.getStatus().name() : null);
         dto.setPrice(ride.getPrice());
@@ -519,6 +528,7 @@ public class RideController {
     // Passenger requests to book a ride
     @PostMapping("/{rideId}/book")
     @PreAuthorize("isAuthenticated()")
+    @Transactional
     public ResponseEntity<?> requestBooking(@PathVariable Long rideId,
             @RequestBody(required = false) BookingCreateDTO dto,
             @AuthenticationPrincipal UserDetails userDetails) {
@@ -598,6 +608,7 @@ public class RideController {
     // Driver accepts a booking
     @PostMapping("/bookings/{bookingId}/accept")
     @PreAuthorize("hasRole('DRIVER') or hasRole('ADMIN')")
+    @Transactional
     public ResponseEntity<?> acceptBooking(@PathVariable Long bookingId,
             @RequestBody(required = false) java.util.Map<String, String> body,
             @AuthenticationPrincipal UserDetails userDetails) {
@@ -650,6 +661,7 @@ public class RideController {
     // Driver rejects a booking
     @PostMapping("/bookings/{bookingId}/reject")
     @PreAuthorize("hasRole('DRIVER') or hasRole('ADMIN')")
+    @Transactional
     public ResponseEntity<?> rejectBooking(@PathVariable Long bookingId,
             @RequestBody(required = false) java.util.Map<String, String> body,
             @AuthenticationPrincipal UserDetails userDetails) {
@@ -689,6 +701,7 @@ public class RideController {
     // Passenger cancels their booking
     @PostMapping("/bookings/{bookingId}/cancel")
     @PreAuthorize("isAuthenticated()")
+    @Transactional
     public ResponseEntity<?> cancelBooking(@PathVariable Long bookingId,
             @AuthenticationPrincipal UserDetails userDetails) {
         User passenger = userRepository.findByEmailAddress(userDetails.getUsername()).orElse(null);
@@ -759,7 +772,7 @@ public class RideController {
         BookingResponseDTO dto = new BookingResponseDTO();
         dto.setId(booking.getId());
         dto.setRideId(booking.getRide().getRideId());
-        dto.setRideOrigin(booking.getRide().getStartingPoint());
+        dto.setRideStartingPoint(booking.getRide().getStartingPoint());
         dto.setRideDestination(booking.getRide().getDestination());
         if (booking.getRide().getDepartureTime() != null) {
             dto.setRideDepartureTime(booking.getRide().getDepartureTime().toString());
@@ -780,7 +793,7 @@ public class RideController {
     @GetMapping("/search")
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<?> searchAvailableRides(
-            @RequestParam(required = false) String origin,
+            @RequestParam(required = false) String startingPoint,
             @RequestParam(required = false) String destination,
             @RequestParam(required = false) String date,
             @RequestParam(required = false) String startTime,
@@ -812,29 +825,29 @@ public class RideController {
         }
 
         // Search based on provided filters
-        boolean hasOrigin = origin != null && !origin.isEmpty();
+        boolean hasStartingPoint = startingPoint != null && !startingPoint.isEmpty();
         boolean hasDestination = destination != null && !destination.isEmpty();
         boolean hasDateRange = startDateTime != null && endDateTime != null;
 
-        if (hasOrigin && hasDestination && hasDateRange) {
+        if (hasStartingPoint && hasDestination && hasDateRange) {
             rides = rideRepository
                     .findByStatusAndStartingPointContainingIgnoreCaseAndDestinationContainingIgnoreCaseAndDepartureTimeBetween(
-                            Ride.RideStatus.SCHEDULED, origin, destination, startDateTime, endDateTime);
+                            Ride.RideStatus.SCHEDULED, startingPoint, destination, startDateTime, endDateTime);
         } else if (hasDestination && hasDateRange) {
             rides = rideRepository.findByStatusAndDestinationContainingIgnoreCaseAndDepartureTimeBetween(
                     Ride.RideStatus.SCHEDULED, destination, startDateTime, endDateTime);
-        } else if (hasOrigin && hasDestination) {
+        } else if (hasStartingPoint && hasDestination) {
             rides = rideRepository.findByStatusAndStartingPointContainingIgnoreCaseAndDestinationContainingIgnoreCase(
-                    Ride.RideStatus.SCHEDULED, origin, destination);
+                    Ride.RideStatus.SCHEDULED, startingPoint, destination);
         } else if (hasDateRange) {
             rides = rideRepository.findByStatusAndDepartureTimeBetween(
                     Ride.RideStatus.SCHEDULED, startDateTime, endDateTime);
         } else if (hasDestination) {
             rides = rideRepository.findByStatusAndDestinationContainingIgnoreCase(
                     Ride.RideStatus.SCHEDULED, destination);
-        } else if (hasOrigin) {
+        } else if (hasStartingPoint) {
             rides = rideRepository.findByStatusAndStartingPointContainingIgnoreCase(
-                    Ride.RideStatus.SCHEDULED, origin);
+                    Ride.RideStatus.SCHEDULED, startingPoint);
         } else {
             rides = rideRepository.findByStatusOrderByDepartureTimeAsc(Ride.RideStatus.SCHEDULED);
         }
@@ -977,7 +990,7 @@ public class RideController {
         Ride ride = booking.getRide();
         java.util.Map<String, Object> rideInfo = new java.util.HashMap<>();
         rideInfo.put("rideId", ride.getRideId());
-        rideInfo.put("origin", ride.getStartingPoint());
+        rideInfo.put("startingPoint", ride.getStartingPoint());
         rideInfo.put("destination", ride.getDestination());
         rideInfo.put("rideStatus", ride.getStatus().name());
         rideInfo.put("price", ride.getPrice());

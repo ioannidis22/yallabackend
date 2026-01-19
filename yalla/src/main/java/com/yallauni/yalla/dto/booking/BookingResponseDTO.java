@@ -3,7 +3,7 @@ package com.yallauni.yalla.dto.booking;
 public class BookingResponseDTO {
     private Long id;
     private Long rideId;
-    private String rideOrigin;
+    private String rideStartingPoint;
     private String rideDestination;
     private String rideDepartureTime;
     private String rideStatus;
@@ -31,12 +31,12 @@ public class BookingResponseDTO {
         this.rideId = rideId;
     }
 
-    public String getRideOrigin() {
-        return rideOrigin;
+    public String getRideStartingPoint() {
+        return rideStartingPoint;
     }
 
-    public void setRideOrigin(String rideOrigin) {
-        this.rideOrigin = rideOrigin;
+    public void setRideStartingPoint(String rideStartingPoint) {
+        this.rideStartingPoint = rideStartingPoint;
     }
 
     public String getRideDestination() {

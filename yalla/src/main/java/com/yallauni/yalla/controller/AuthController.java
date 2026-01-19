@@ -58,6 +58,18 @@ public class AuthController {
             authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(email, password));
             User user = userRepository.findByEmailAddress(email).orElse(null);
+
+            // Check if user is banned
+            if (user != null && user.isBanned()) {
+                Map<String, String> error = new HashMap<>();
+                error.put("error", "account_banned");
+                error.put("message", "Your account has been banned");
+                if (user.getBanReason() != null && !user.getBanReason().isBlank()) {
+                    error.put("reason", user.getBanReason());
+                }
+                return ResponseEntity.status(403).body(error);
+            }
+
             // Issue JWT with user's role
             String role = user != null && user.getUserType() != null ? user.getUserType().name() : "USER";
             String token = jwtService.issue(email, List.of(role));

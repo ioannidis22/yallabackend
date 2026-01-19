@@ -4,8 +4,11 @@ package com.yallauni.yalla.dto.ride;
 import jakarta.validation.constraints.*;
 
 public class RideCreateDTO {
+    @NotNull
+    private Long vehicleId;
+
     @NotBlank
-    private String origin;
+    private String startingPoint;
 
     @NotBlank
     private String destination;
@@ -21,12 +24,20 @@ public class RideCreateDTO {
 
     private String driverNotes;
 
-    public String getOrigin() {
-        return origin;
+    public Long getVehicleId() {
+        return vehicleId;
     }
 
-    public void setOrigin(String origin) {
-        this.origin = origin;
+    public void setVehicleId(Long vehicleId) {
+        this.vehicleId = vehicleId;
+    }
+
+    public String getStartingPoint() {
+        return startingPoint;
+    }
+
+    public void setStartingPoint(String startingPoint) {
+        this.startingPoint = startingPoint;
     }
 
     public String getDestination() {

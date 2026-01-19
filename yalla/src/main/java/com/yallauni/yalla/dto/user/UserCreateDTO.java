@@ -3,24 +3,39 @@ package com.yallauni.yalla.dto.user;
 import jakarta.validation.constraints.*;
 
 public class UserCreateDTO {
-    @NotBlank // The username for the new user
-    @Size(min = 3, max = 50) // Username must be between 3 and 50 characters
-    private String username;
 
-    @NotBlank // The user's email address
-    @Email // Must be a valid email format
+    @Size(max = 100)
+    private String firstName;
+
+    @Size(max = 100)
+    private String lastName;
+
+    @Email
     private String email;
 
-    @NotBlank // The user's password
-    @Size(min = 8, max = 100) // Password must be between 8 and 100 characters
+    @Size(min = 8, max = 100)
     private String password;
 
-    public String getUsername() {
-        return username;
+    @Size(max = 20)
+    private String phoneNumber;
+
+    private String userType; // PASSENGER, DRIVER, ADMIN
+
+    // Getters and Setters
+    public String getFirstName() {
+        return firstName;
     }
 
-    public void setUsername(String username) {
-        this.username = username;
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
     }
 
     public String getEmail() {
@@ -37,5 +52,21 @@ public class UserCreateDTO {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public String getPhoneNumber() {
+        return phoneNumber;
+    }
+
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
+    }
+
+    public String getUserType() {
+        return userType;
+    }
+
+    public void setUserType(String userType) {
+        this.userType = userType;
     }
 }

@@ -27,70 +27,66 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserResponseDTO registerUser(UserCreateDTO userDto) {
-        // Map DTO to entity, set defaults, and save user
         User user = new User();
-        user.setFirstName(userDto.getUsername());
+        user.setFirstName(userDto.getFirstName());
+        user.setLastName(userDto.getLastName());
         user.setEmailAddress(userDto.getEmail());
         user.setPassword(userDto.getPassword());
-        // Προσθέστε και άλλα πεδία αν χρειάζεται
-        if (user.getUserType() == null) {
+        user.setMobilePhoneNumber(userDto.getPhoneNumber());
+
+        if (userDto.getUserType() != null) {
+            user.setUserType(User.UserType.valueOf(userDto.getUserType().toUpperCase()));
+        } else {
             user.setUserType(User.UserType.PASSENGER);
         }
+
         User saved = userRepository.save(user);
-        return toDto(saved);
+        return UserResponseDTO.fromEntity(saved);
     }
 
     @Override
     public Optional<UserResponseDTO> findById(Long id) {
-        // Find user by id and return as DTO
-        return userRepository.findById(id).map(this::toDto);
+        return userRepository.findById(id).map(UserResponseDTO::fromEntity);
     }
 
     @Override
     public Optional<UserResponseDTO> findByEmail(String email) {
-        // Find user by email and return as DTO
-        return userRepository.findByEmailAddress(email).map(this::toDto);
+        return userRepository.findByEmailAddress(email).map(UserResponseDTO::fromEntity);
     }
 
     @Override
     public List<UserResponseDTO> findAll() {
-        // Return all users as a list of DTOs
-        return userRepository.findAll().stream().map(this::toDto).toList();
+        return userRepository.findAll().stream().map(UserResponseDTO::fromEntity).toList();
     }
 
     @Override
     public UserResponseDTO updateUser(Long id, UserCreateDTO userDto) {
-        // Update user fields and save
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("User not found with id: " + id));
 
         // Update only provided fields
-        if (userDto.getUsername() != null) {
-            user.setFirstName(userDto.getUsername());
+        if (userDto.getFirstName() != null) {
+            user.setFirstName(userDto.getFirstName());
+        }
+        if (userDto.getLastName() != null) {
+            user.setLastName(userDto.getLastName());
         }
         if (userDto.getEmail() != null) {
             user.setEmailAddress(userDto.getEmail());
+        }
+        if (userDto.getPhoneNumber() != null) {
+            user.setMobilePhoneNumber(userDto.getPhoneNumber());
         }
         if (userDto.getPassword() != null && !userDto.getPassword().isBlank()) {
             user.setPassword(userDto.getPassword());
         }
 
         User updated = userRepository.save(user);
-        return toDto(updated);
+        return UserResponseDTO.fromEntity(updated);
     }
 
     @Override
     public void deleteUser(Long id) {
-        // Delete user by id
         userRepository.deleteById(id);
-    }
-
-    private UserResponseDTO toDto(User user) {
-        // Convert User entity to UserResponseDTO
-        UserResponseDTO dto = new UserResponseDTO();
-        dto.setId(user.getUserID());
-        dto.setUsername(user.getFirstName());
-        dto.setEmail(user.getEmailAddress());
-        return dto;
     }
 }
