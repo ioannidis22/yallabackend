@@ -349,7 +349,7 @@ public class SupportTicketController {
     @GetMapping("/admin/user/{userId}")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<List<TicketResponseDTO>> getTicketsByUser(@PathVariable Long userId) {
-        List<TicketResponseDTO> tickets = ticketRepository.findByUserIdOrderByCreatedAtDesc(userId)
+        List<TicketResponseDTO> tickets = ticketRepository.findByUser_UserIDOrderByCreatedAtDesc(userId)
                 .stream()
                 .map(TicketResponseDTO::fromEntity)
                 .collect(Collectors.toList());
