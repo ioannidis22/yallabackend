@@ -201,12 +201,35 @@ public class User {
     @Column(name = "driver_license", nullable = true)
     private String driverLicense;
 
+    @Column(nullable = false)
+    private boolean banned = false;
+
+    @Size(max = 500)
+    @Column(name = "ban_reason")
+    private String banReason;
+
     public String getDriverLicense() {
         return driverLicense;
     }
 
     public void setDriverLicense(String driverLicense) {
         this.driverLicense = driverLicense;
+    }
+
+    public boolean isBanned() {
+        return banned;
+    }
+
+    public void setBanned(boolean banned) {
+        this.banned = banned;
+    }
+
+    public String getBanReason() {
+        return banReason;
+    }
+
+    public void setBanReason(String banReason) {
+        this.banReason = banReason;
     }
 
     @Override

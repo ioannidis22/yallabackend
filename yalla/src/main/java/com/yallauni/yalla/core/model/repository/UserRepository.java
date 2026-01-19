@@ -14,4 +14,10 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     // Count users by type (DRIVER, PASSENGER, ADMIN)
     long countByUserType(User.UserType userType);
+
+    // Find all banned users
+    java.util.List<User> findByBannedTrue();
+
+    // Count banned users
+    long countByBannedTrue();
 }

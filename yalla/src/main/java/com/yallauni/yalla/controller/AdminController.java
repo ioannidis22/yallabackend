@@ -4,12 +4,14 @@ package com.yallauni.yalla.controller;
 import com.yallauni.yalla.core.model.Admin;
 import com.yallauni.yalla.core.model.Ride;
 import com.yallauni.yalla.core.model.User;
+import com.yallauni.yalla.core.model.SupportTicket;
 // Service for admin logic
 import com.yallauni.yalla.core.model.service.AdminService;
 // Repositories for dashboard stats
 import com.yallauni.yalla.core.model.repository.UserRepository;
 import com.yallauni.yalla.core.model.repository.RideRepository;
 import com.yallauni.yalla.core.model.repository.ReviewRepository;
+import com.yallauni.yalla.core.model.repository.SupportTicketRepository;
 // DTO for creating admin
 import com.yallauni.yalla.dto.admin.AdminCreateDTO;
 // DTO for returning admin data
@@ -35,13 +37,16 @@ public class AdminController {
     private final UserRepository userRepository;
     private final RideRepository rideRepository;
     private final ReviewRepository reviewRepository;
+    private final SupportTicketRepository ticketRepository;
 
     public AdminController(AdminService adminService, UserRepository userRepository,
-            RideRepository rideRepository, ReviewRepository reviewRepository) {
+            RideRepository rideRepository, ReviewRepository reviewRepository,
+            SupportTicketRepository ticketRepository) {
         this.adminService = adminService;
         this.userRepository = userRepository;
         this.rideRepository = rideRepository;
         this.reviewRepository = reviewRepository;
+        this.ticketRepository = ticketRepository;
     }
 
     @GetMapping("/dashboard")
@@ -53,6 +58,7 @@ public class AdminController {
         dashboard.setTotalUsers(userRepository.count());
         dashboard.setTotalDrivers(userRepository.countByUserType(User.UserType.DRIVER));
         dashboard.setTotalPassengers(userRepository.countByUserType(User.UserType.PASSENGER));
+        dashboard.setBannedUsers(userRepository.countByBannedTrue());
 
         // Ride counts
         dashboard.setTotalRides(rideRepository.count());
@@ -67,6 +73,10 @@ public class AdminController {
         double avgRating = reviews.isEmpty() ? 0.0
                 : reviews.stream().mapToDouble(r -> r.getRating()).average().orElse(0.0);
         dashboard.setAverageRating(Math.round(avgRating * 10.0) / 10.0); // Round to 1 decimal
+
+        // Ticket stats
+        dashboard.setTotalTickets(ticketRepository.count());
+        dashboard.setPendingTickets(ticketRepository.countByStatus(SupportTicket.TicketStatus.PENDING));
 
         return ResponseEntity.ok(dashboard);
     }
@@ -141,5 +151,102 @@ public class AdminController {
         // Delete admin by id
         adminService.deleteAdmin(id);
         return ResponseEntity.noContent().build();
+    }
+
+    // ==================== BAN MANAGEMENT ====================
+
+    // Get all banned users
+    @GetMapping("/users/banned")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<?> getBannedUsers() {
+        List<User> bannedUsers = userRepository.findByBannedTrue();
+        return ResponseEntity.ok(bannedUsers.stream().map(this::mapUserToResponse).toList());
+    }
+
+    // Check if a specific user is banned
+    @GetMapping("/users/{userId}/ban-status")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<?> checkUserBanStatus(@PathVariable Long userId) {
+        Optional<User> userOpt = userRepository.findById(userId);
+        if (userOpt.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+        User user = userOpt.get();
+        java.util.Map<String, Object> status = new java.util.HashMap<>();
+        status.put("userId", user.getUserID());
+        status.put("email", user.getEmailAddress());
+        status.put("banned", user.isBanned());
+        status.put("banReason", user.getBanReason());
+        return ResponseEntity.ok(status);
+    }
+
+    // Ban a user
+    @PostMapping("/users/{userId}/ban")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<?> banUser(@PathVariable Long userId,
+            @RequestBody(required = false) java.util.Map<String, String> body) {
+        Optional<User> userOpt = userRepository.findById(userId);
+        if (userOpt.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+        User user = userOpt.get();
+
+        // Prevent banning admins
+        if (user.getUserType() == User.UserType.ADMIN) {
+            return ResponseEntity.badRequest().body("Cannot ban an admin user");
+        }
+
+        if (user.isBanned()) {
+            return ResponseEntity.badRequest().body("User is already banned");
+        }
+
+        user.setBanned(true);
+        String reason = (body != null) ? body.get("reason") : null;
+        user.setBanReason(reason);
+        userRepository.save(user);
+
+        java.util.Map<String, Object> response = new java.util.HashMap<>();
+        response.put("message", "User banned successfully");
+        response.put("userId", user.getUserID());
+        response.put("email", user.getEmailAddress());
+        response.put("banReason", reason);
+        return ResponseEntity.ok(response);
+    }
+
+    // Unban a user
+    @PostMapping("/users/{userId}/unban")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<?> unbanUser(@PathVariable Long userId) {
+        Optional<User> userOpt = userRepository.findById(userId);
+        if (userOpt.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+        User user = userOpt.get();
+
+        if (!user.isBanned()) {
+            return ResponseEntity.badRequest().body("User is not banned");
+        }
+
+        user.setBanned(false);
+        user.setBanReason(null);
+        userRepository.save(user);
+
+        java.util.Map<String, Object> response = new java.util.HashMap<>();
+        response.put("message", "User unbanned successfully");
+        response.put("userId", user.getUserID());
+        response.put("email", user.getEmailAddress());
+        return ResponseEntity.ok(response);
+    }
+
+    private java.util.Map<String, Object> mapUserToResponse(User user) {
+        java.util.Map<String, Object> dto = new java.util.HashMap<>();
+        dto.put("id", user.getUserID());
+        dto.put("firstName", user.getFirstName());
+        dto.put("lastName", user.getLastName());
+        dto.put("email", user.getEmailAddress());
+        dto.put("userType", user.getUserType());
+        dto.put("banned", user.isBanned());
+        dto.put("banReason", user.getBanReason());
+        return dto;
     }
 }

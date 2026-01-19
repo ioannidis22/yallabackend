@@ -4,14 +4,22 @@ package com.yallauni.yalla.dto.ride;
 import jakarta.validation.constraints.*;
 
 public class RideCreateDTO {
-    @NotBlank // The starting point of the ride
+    @NotBlank
     private String origin;
 
-    @NotBlank // The destination of the ride
+    @NotBlank
     private String destination;
 
-    @NotBlank // The date of the ride 
-    private String date;
+    // Departure time in ISO format: "2026-01-20T14:30:00"
+    private String departureTime;
+
+    @DecimalMin("0.0")
+    private Double price;
+
+    @Min(1)
+    private Integer availableSeats;
+
+    private String driverNotes;
 
     public String getOrigin() {
         return origin;
@@ -29,11 +37,35 @@ public class RideCreateDTO {
         this.destination = destination;
     }
 
-    public String getDate() {
-        return date;
+    public String getDepartureTime() {
+        return departureTime;
     }
 
-    public void setDate(String date) {
-        this.date = date;
+    public void setDepartureTime(String departureTime) {
+        this.departureTime = departureTime;
+    }
+
+    public Double getPrice() {
+        return price;
+    }
+
+    public void setPrice(Double price) {
+        this.price = price;
+    }
+
+    public Integer getAvailableSeats() {
+        return availableSeats;
+    }
+
+    public void setAvailableSeats(Integer availableSeats) {
+        this.availableSeats = availableSeats;
+    }
+
+    public String getDriverNotes() {
+        return driverNotes;
+    }
+
+    public void setDriverNotes(String driverNotes) {
+        this.driverNotes = driverNotes;
     }
 }

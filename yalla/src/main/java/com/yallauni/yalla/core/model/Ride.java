@@ -50,6 +50,13 @@ public class Ride {
     @Column(nullable = false)
     private Double price;
 
+    @Column(name = "departure_time")
+    private java.time.LocalDateTime departureTime;
+
+    @Min(1)
+    @Column(name = "available_seats", nullable = false)
+    private int availableSeats = 4;
+
     @Size(max = 500)
     @Column(name = "driver_notes")
     private String driverNotes;
@@ -147,5 +154,27 @@ public class Ride {
 
     public void setDriverNotes(String driverNotes) {
         this.driverNotes = driverNotes;
+    }
+
+    public java.time.LocalDateTime getDepartureTime() {
+        return departureTime;
+    }
+
+    public void setDepartureTime(java.time.LocalDateTime departureTime) {
+        this.departureTime = departureTime;
+    }
+
+    public int getAvailableSeats() {
+        return availableSeats;
+    }
+
+    public void setAvailableSeats(int availableSeats) {
+        this.availableSeats = availableSeats;
+    }
+
+    // Check available seats for booking
+    public int getRemainingSeats() {
+        int takenSeats = (passengers != null) ? passengers.size() : 0;
+        return availableSeats - takenSeats;
     }
 }

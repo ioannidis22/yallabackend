@@ -4,6 +4,7 @@ public class DashboardDTO {
     private long totalUsers;
     private long totalDrivers;
     private long totalPassengers;
+    private long bannedUsers;
     private long totalRides;
     private long activeRides;
     private long completedRides;
@@ -33,6 +34,14 @@ public class DashboardDTO {
 
     public void setTotalPassengers(long totalPassengers) {
         this.totalPassengers = totalPassengers;
+    }
+
+    public long getBannedUsers() {
+        return bannedUsers;
+    }
+
+    public void setBannedUsers(long bannedUsers) {
+        this.bannedUsers = bannedUsers;
     }
 
     public long getTotalRides() {
@@ -73,5 +82,25 @@ public class DashboardDTO {
 
     public void setAverageRating(double averageRating) {
         this.averageRating = averageRating;
+    }
+
+    // Ticket stats
+    private long pendingTickets;
+    private long totalTickets;
+
+    public long getPendingTickets() {
+        return pendingTickets;
+    }
+
+    public void setPendingTickets(long pendingTickets) {
+        this.pendingTickets = pendingTickets;
+    }
+
+    public long getTotalTickets() {
+        return totalTickets;
+    }
+
+    public void setTotalTickets(long totalTickets) {
+        this.totalTickets = totalTickets;
     }
 }
