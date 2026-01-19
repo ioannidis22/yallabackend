@@ -10,6 +10,7 @@ import com.yallauni.yalla.dto.review.ReviewCreateDTO;
 import com.yallauni.yalla.dto.review.ReviewResponseDTO;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -20,6 +21,7 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/reviews")
+@Transactional(readOnly = true)
 public class ReviewController {
     private final ReviewService reviewService;
     private final RideService rideService;
@@ -34,6 +36,7 @@ public class ReviewController {
     // Add review - reviewer is the authenticated user, must be involved in the ride
     @PostMapping("/add")
     @PreAuthorize("isAuthenticated()")
+    @Transactional
     public ResponseEntity<?> addReview(@RequestBody ReviewCreateDTO reviewDto,
             @AuthenticationPrincipal UserDetails userDetails) {
         User reviewer = userRepository.findByEmailAddress(userDetails.getUsername()).orElse(null);
@@ -129,6 +132,7 @@ public class ReviewController {
     // Delete review - only reviewer or admin
     @DeleteMapping("/{id}")
     @PreAuthorize("isAuthenticated()")
+    @Transactional
     public ResponseEntity<?> deleteReview(@PathVariable Long id, @AuthenticationPrincipal UserDetails userDetails) {
         User currentUser = userRepository.findByEmailAddress(userDetails.getUsername()).orElse(null);
         if (currentUser == null) {
