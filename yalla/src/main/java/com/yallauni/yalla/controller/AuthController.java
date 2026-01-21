@@ -1,42 +1,33 @@
 package com.yallauni.yalla.controller;
 
-// User entity
 import com.yallauni.yalla.core.model.User;
-// Repository for user data
 import com.yallauni.yalla.core.model.repository.UserRepository;
-// Service for JWT operations
 import com.yallauni.yalla.core.security.JwtService;
-// Service for password reset logic
 import com.yallauni.yalla.core.service.PasswordResetService;
-// DTO for confirming password reset
 import com.yallauni.yalla.dto.auth.PasswordResetConfirmRequest;
-// DTO for requesting password reset
 import com.yallauni.yalla.dto.auth.PasswordResetRequest;
 
-// For validating request bodies
 import jakarta.validation.Valid;
 
-// For dependency injection (already commented elsewhere)
 import org.springframework.beans.factory.annotation.Autowired;
-// Used for HTTP responses (already commented elsewhere)
 import org.springframework.http.ResponseEntity;
-// For authentication logic
 import org.springframework.security.authentication.AuthenticationManager;
-// For creating authentication tokens
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-// Exception for authentication errors
 import org.springframework.security.core.AuthenticationException;
-// For encoding passwords
 import org.springframework.security.crypto.password.PasswordEncoder;
-// Spring REST controller annotations (already commented elsewhere)
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * REST controller for authentication operations.
+ * Handles user login, registration, and password reset features.
+ * Issues JWT tokens for authenticated users.
+ */
 @RestController
-@RequestMapping("/api/auth") // All endpoints in this controller start with /api/auth
+@RequestMapping("/api/auth") // All endpoints in this controller start with /api/auth.
 public class AuthController {
     @Autowired
     private AuthenticationManager authenticationManager;
@@ -51,7 +42,7 @@ public class AuthController {
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody Map<String, String> loginRequest) {
-        // Authenticate user and return JWT if successful
+        // Authenticate user and return JWT if succesful.
         try {
             String email = loginRequest.get("email");
             String password = loginRequest.get("password");
@@ -112,15 +103,14 @@ public class AuthController {
     public ResponseEntity<?> forgotPassword(@RequestBody @Valid PasswordResetRequest request) {
         // Request a password reset (sends code to email)
         passwordResetService.requestPasswordReset(request.email());
-        // Always return success to prevent email enumeration
+        // Always return successful message.
         Map<String, String> response = new HashMap<>();
         response.put("message", "If the email exists, a reset code has been sent");
         return ResponseEntity.ok(response);
     }
 
-    /**
-     * Reset password using the 6-digit code.
-     */
+    // Reset password using the 6-digit code.
+     
     @PostMapping("/reset-password")
     public ResponseEntity<?> resetPassword(@RequestBody @Valid PasswordResetConfirmRequest request) {
         // Reset password using the code
@@ -137,10 +127,7 @@ public class AuthController {
         }
     }
 
-    /**
-     * Validate a reset code (optional - for UI to check before showing password
-     * form).
-     */
+    // Validate a reset code.
     @PostMapping("/validate-reset-code")
     public ResponseEntity<?> validateResetCode(@RequestBody Map<String, String> request) {
         // Check if the reset code is valid

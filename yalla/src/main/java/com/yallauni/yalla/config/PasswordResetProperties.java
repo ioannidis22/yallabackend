@@ -2,9 +2,11 @@ package com.yallauni.yalla.config;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
-// With this annotation, Spring reads values starting with 'app.password-reset' from the properties
+/**
+ * Configuration properties for password reset functionality.
+ * Binds properties prefixed with 'app.password-reset' from application.yml.
+ */
 @ConfigurationProperties(prefix = "app.password-reset")
 public record PasswordResetProperties(
-        // How many minutes the reset token is valid
-        int tokenValidityMinutes) {
+                int tokenValidityMinutes) {
 }

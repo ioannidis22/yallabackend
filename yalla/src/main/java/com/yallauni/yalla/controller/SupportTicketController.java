@@ -10,7 +10,6 @@ import com.yallauni.yalla.dto.ticket.TicketCreateDTO;
 import com.yallauni.yalla.dto.ticket.TicketResponseDTO;
 import com.yallauni.yalla.dto.ticket.TicketUpdateDTO;
 import com.yallauni.yalla.dto.ticket.TicketStatsDTO;
-
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -27,6 +26,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+/**
+ * REST controller for managing support tickets.
+ * Users can create and view their tickets.
+ * Admins can manage all tickets, respond, and update status.
+ */
 @RestController
 @RequestMapping("/api/tickets")
 public class SupportTicketController {
@@ -39,7 +43,7 @@ public class SupportTicketController {
         this.userRepository = userRepository;
     }
 
-    // ==================== USER ENDPOINTS ====================
+    // --------------------- USER ENDPOINTS ---------------------
 
     /**
      * Create a new support ticket
@@ -111,7 +115,7 @@ public class SupportTicketController {
     }
 
     /**
-     * Cancel/close a ticket (user can only cancel their own pending tickets)
+     * Cancel a ticket (user can only cancel their own pending tickets)
      */
     @DeleteMapping("/{id}")
     @PreAuthorize("isAuthenticated()")
@@ -149,7 +153,7 @@ public class SupportTicketController {
         return ResponseEntity.ok(Arrays.asList(TicketCategory.values()));
     }
 
-    // ==================== ADMIN ENDPOINTS ====================
+    // --------------------- ADMIN TICKETING SYSTEM ENDPOINTS ---------------------
 
     /**
      * Get all tickets (admin only)
@@ -281,7 +285,7 @@ public class SupportTicketController {
     }
 
     /**
-     * Resolve a ticket with response (admin convenience endpoint)
+     * Resolve a ticket with response.
      */
     @PutMapping("/admin/{id}/resolve")
     @PreAuthorize("hasRole('ADMIN')")
@@ -311,7 +315,7 @@ public class SupportTicketController {
     }
 
     /**
-     * Get ticket statistics (admin only)
+     * Get ticket statistics.
      */
     @GetMapping("/admin/stats")
     @PreAuthorize("hasRole('ADMIN')")
@@ -331,7 +335,7 @@ public class SupportTicketController {
     }
 
     /**
-     * Delete a ticket (admin only - for cleanup)
+     * Delete a ticket.
      */
     @DeleteMapping("/admin/{id}")
     @PreAuthorize("hasRole('ADMIN')")
@@ -344,7 +348,7 @@ public class SupportTicketController {
     }
 
     /**
-     * Get tickets for a specific user (admin only)
+     * Get tickets for a specific user.
      */
     @GetMapping("/admin/user/{userId}")
     @PreAuthorize("hasRole('ADMIN')")

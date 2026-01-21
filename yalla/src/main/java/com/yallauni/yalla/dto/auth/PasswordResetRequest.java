@@ -5,7 +5,8 @@ import jakarta.validation.constraints.NotBlank;
 
 /**
  * Request to initiate password reset.
+ * Contains the email address of the user requesting password reset.
  */
 public record PasswordResetRequest(
-        @NotBlank(message = "Email is required") @Email(message = "Invalid email format") String email) {
+                @NotBlank(message = "Email is required") @Email(message = "Invalid email format") String email) {
 }

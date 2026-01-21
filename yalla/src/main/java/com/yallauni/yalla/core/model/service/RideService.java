@@ -1,15 +1,18 @@
 package com.yallauni.yalla.core.model.service;
 
-// Ride entity (already commented elsewhere)
 import com.yallauni.yalla.core.model.Ride;
-// User entity (already commented elsewhere)
 import com.yallauni.yalla.core.model.User;
-// Vehicle entity (already commented elsewhere)
 import com.yallauni.yalla.core.model.Vehicle;
 
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * Service interface for ride operations.
+ * Defines business logic for creating and managing rides.
+ * Also handles passenger management for rides.
+ * Implemented by RideServiceImpl.
+ */
 public interface RideService {
 
     // Create a new ride for a driver and vehicle

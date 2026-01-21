@@ -1,13 +1,15 @@
 package com.yallauni.yalla.core.model.repository;
 
-// Spring Data JPA base repository (already commented elsewhere)
 import org.springframework.data.jpa.repository.JpaRepository;
-
-// User entity (already commented elsewhere)
 import com.yallauni.yalla.core.model.User;
 
 import java.util.Optional;
 
+/**
+ * Repository interface for User model database operations.
+ * Extends JpaRepository to provide CRUD operations and custom queries.
+ * Used by UserService and security components for user data access.
+ */
 public interface UserRepository extends JpaRepository<User, Long> {
     // Find a user by their email address
     Optional<User> findByEmailAddress(String emailAddress);

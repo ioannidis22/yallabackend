@@ -1,15 +1,30 @@
 package com.yallauni.yalla.dto.driver;
 
+/**
+ * DTO for driver statistics.
+ * Contains metrics about a driver's activity.
+ * Used by driver dashboard and admin reports.
+ */
 public class DriverStatsDTO {
+    /** Unique identifier of the driver */
     private Long driverId;
+    /** Full name of the driver */
     private String driverName;
+    /** Total number of completed trips */
     private long totalTripsCompleted;
+    /** Total number of cancelled trips */
     private long totalTripsCancelled;
+    /** Number of rides currently scheduled */
     private long scheduledRides;
+    /** Number of rides currently in progress */
     private long inProgressRides;
+    /** Number of pending booking requests */
     private long pendingBookings;
+    /** Number of accepted bookings */
     private long acceptedBookings;
+    /** Number of rejected bookings */
     private long rejectedBookings;
+    /** Average rating received from passengers (1.0 - 5.0) */
     private double averageRating;
 
     public Long getDriverId() {

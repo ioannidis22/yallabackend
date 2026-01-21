@@ -8,6 +8,10 @@ import com.yallauni.yalla.core.model.User;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * Repository for Booking entity.
+ * Provides CRUD operations and custom queries for booking management.
+ */
 public interface BookingRepository extends JpaRepository<Booking, Long> {
     // Find all bookings for a specific ride
     List<Booking> findByRide(Ride ride);
@@ -27,9 +31,9 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
     // Count bookings by status for a ride
     long countByRideAndStatus(Ride ride, Booking.BookingStatus status);
 
-    // Find all bookings for rides where user is driver, by status
+    // Find all bookings for rides where user is a driver, by status
     List<Booking> findByRide_DriverAndStatus(User driver, Booking.BookingStatus status);
 
-    // Find all bookings for rides where user is driver
+    // Find all bookings for rides where user is a driver
     List<Booking> findByRide_Driver(User driver);
 }

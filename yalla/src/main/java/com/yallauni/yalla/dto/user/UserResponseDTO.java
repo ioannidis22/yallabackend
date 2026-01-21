@@ -2,18 +2,31 @@ package com.yallauni.yalla.dto.user;
 
 import com.yallauni.yalla.core.model.User;
 
+/**
+ * Data Transfer Object for returning user information in API responses.
+ * Contains user profile data excluding sensitive information like passwords.
+ * Includes a factory method to convert from User entity to DTO.
+ */
 public class UserResponseDTO {
+    /** Unique identifier of the user */
     private Long id;
+    /** User's first name */
     private String firstName;
+    /** User's last name */
     private String lastName;
+    /** User's email address (used for login) */
     private String email;
+    /** User's mobile phone number */
     private String phoneNumber;
+    /** Type of user: DRIVER, PASSENGER, or ADMIN */
     private String userType;
+    /** User's average rating (1.0 - 5.0) */
     private Double rating;
+    /** Whether the user account is banned */
     private boolean banned;
+    /** Reason for the ban (if banned) */
     private String banReason;
 
-    // Static factory method from entity
     public static UserResponseDTO fromEntity(User user) {
         UserResponseDTO dto = new UserResponseDTO();
         dto.setId(user.getUserID());
@@ -28,7 +41,6 @@ public class UserResponseDTO {
         return dto;
     }
 
-    // Getters and Setters
     public Long getId() {
         return id;
     }

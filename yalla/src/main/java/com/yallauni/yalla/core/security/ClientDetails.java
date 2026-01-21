@@ -1,11 +1,8 @@
-// Immutable details of an API client (record, student-style comment)
 package com.yallauni.yalla.core.security;
 
-import java.util.Collection; // list of roles
+import java.util.Collection;
 
-/**
- * Immutable details of an API client.
- */
+
 public record ClientDetails(
         String id,
         Collection<String> roles) {

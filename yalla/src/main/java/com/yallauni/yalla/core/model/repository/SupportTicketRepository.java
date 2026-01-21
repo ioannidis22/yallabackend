@@ -12,6 +12,10 @@ import org.springframework.stereotype.Repository;
 import java.time.LocalDateTime;
 import java.util.List;
 
+/**
+ * Repository interface for SupportTicket.
+ * Provides CRUD operations and custom queries for ticket management.
+ */
 @Repository
 public interface SupportTicketRepository extends JpaRepository<SupportTicket, Long> {
 
@@ -29,7 +33,7 @@ public interface SupportTicketRepository extends JpaRepository<SupportTicket, Lo
     // Find tickets by status and category
     List<SupportTicket> findByStatusAndCategoryOrderByCreatedAtAsc(TicketStatus status, TicketCategory category);
 
-    // Find pending tickets (oldest first - FIFO queue)
+    // Find pending tickets (oldest first)
     List<SupportTicket> findByStatusInOrderByCreatedAtAsc(List<TicketStatus> statuses);
 
     // Find tickets by user and status
@@ -41,7 +45,7 @@ public interface SupportTicketRepository extends JpaRepository<SupportTicket, Lo
     // Count tickets by user
     long countByUser(User user);
 
-    // Find all tickets ordered by created date (newest first for admin view)
+    // Find all tickets ordered by created date (newest first)
     List<SupportTicket> findAllByOrderByCreatedAtDesc();
 
     // Find tickets created in a date range

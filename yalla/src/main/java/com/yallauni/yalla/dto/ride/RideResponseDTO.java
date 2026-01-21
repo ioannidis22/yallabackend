@@ -1,24 +1,40 @@
-// DTO for ride response
 package com.yallauni.yalla.dto.ride;
 
 import java.util.List;
 
+/**
+ * Data Transfer Object for returning ride information in API responses.
+ * Contains comprehensive ride details including driver and passenger info.
+ */
 public class RideResponseDTO {
+    /** Unique identifier of the ride */
     private Long id;
+    /** Starting location of the ride */
     private String startingPoint;
+    /** Destination of the ride */
     private String destination;
+    /** Scheduled departure time */
     private String departureTime;
+    /** Current status (SCHEDULED, IN_PROGRESS, COMPLETED, CANCELLED) */
     private String status;
+    /** Price per seat */
     private Double price;
+    /** Total number of available seats */
     private int availableSeats;
+    /** Number of remaining seats after bookings */
     private int remainingSeats;
+    /** Current number of passengers */
     private int passengerCount;
+    /** Driver's notes about the ride */
     private String driverNotes;
+    /** ID of the driver */
     private Long driverId;
+    /** Full name of the driver */
     private String driverName;
+    /** List of passengers on this ride */
     private List<PassengerInfo> passengers;
 
-    // Nested class for passenger info
+    // class for passenger info
     public static class PassengerInfo {
         private Long id;
         private String name;

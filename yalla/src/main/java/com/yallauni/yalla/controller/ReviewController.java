@@ -8,7 +8,6 @@ import com.yallauni.yalla.core.model.service.RideService;
 import com.yallauni.yalla.core.model.repository.UserRepository;
 import com.yallauni.yalla.dto.review.ReviewCreateDTO;
 import com.yallauni.yalla.dto.review.ReviewResponseDTO;
-
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
@@ -19,6 +18,11 @@ import org.springframework.security.core.userdetails.UserDetails;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * REST controller for managing reviews.
+ * Users can add reviews for rides they participated in.
+ * Reviews contain ratings and (optional) comments.
+ */
 @RestController
 @RequestMapping("/api/reviews")
 @Transactional(readOnly = true)
@@ -33,7 +37,7 @@ public class ReviewController {
         this.userRepository = userRepository;
     }
 
-    // Add review - reviewer is the authenticated user, must be involved in the ride
+    // Add review the reviewer is an authenticated user, and must be involved in the ride.
     @PostMapping("/add")
     @PreAuthorize("isAuthenticated()")
     @Transactional
@@ -45,7 +49,7 @@ public class ReviewController {
         }
 
         try {
-            // Verify the ride exists
+            // Verify the ride exists.
             Optional<Ride> rideOpt = rideService.findById(reviewDto.getRideId());
             if (rideOpt.isEmpty()) {
                 return ResponseEntity.badRequest().body("Ride not found");
@@ -74,7 +78,7 @@ public class ReviewController {
         }
     }
 
-    // Get my reviews - reviews written by or about the authenticated user
+    // Get user's reviews, reviews written by or about the authenticated user
     @GetMapping("/my")
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<?> getMyReviews(@AuthenticationPrincipal UserDetails userDetails) {
@@ -122,14 +126,14 @@ public class ReviewController {
         return ResponseEntity.ok(mapToDto(review));
     }
 
-    // Get all reviews - admin only
+    // Get all reviews, admin only
     @GetMapping
     @PreAuthorize("hasRole('ADMIN')")
     public List<ReviewResponseDTO> getAllReviews() {
         return reviewService.findAll().stream().map(this::mapToDto).toList();
     }
 
-    // Delete review - only reviewer or admin
+    // Delete review, only reviewer or admin
     @DeleteMapping("/{id}")
     @PreAuthorize("isAuthenticated()")
     @Transactional

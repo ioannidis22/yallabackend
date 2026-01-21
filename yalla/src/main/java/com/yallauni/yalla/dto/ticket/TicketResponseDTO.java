@@ -6,27 +6,44 @@ import com.yallauni.yalla.core.model.SupportTicket.TicketCategory;
 
 import java.time.LocalDateTime;
 
+/**
+ * Data Transfer Object for returning ticket information in API responses.
+ * Includes user info, ticket details, and admin response.
+ */
 public class TicketResponseDTO {
 
+    // Ticket unique identifier
     private Long id;
+    // ID of the user who created the ticket
     private Long userId;
+    // Email of the ticket creator
     private String userEmail;
+    // Full name of the ticket creator
     private String userName;
+    // Subject/title of the ticket
     private String subject;
+    // Detailed message content
     private String message;
+    // Current ticket status (PENDING, IN_PROGRESS, RESOLVED, CLOSED)
     private TicketStatus status;
+    // Ticket category (GENERAL, RIDE_ISSUE, PAYMENT, etc.)
     private TicketCategory category;
+    // Admin's response to the ticket
     private String adminResponse;
+    // ID of the admin who responded
     private Long respondedBy;
+    // Timestamp when ticket was created
     private LocalDateTime createdAt;
+    // Timestamp when ticket was last updated
     private LocalDateTime updatedAt;
+    // Timestamp when ticket was resolved
     private LocalDateTime resolvedAt;
 
     // Default constructor
     public TicketResponseDTO() {
     }
 
-    // Factory method to create from entity
+    // Μethod to create from entity
     public static TicketResponseDTO fromEntity(SupportTicket ticket) {
         TicketResponseDTO dto = new TicketResponseDTO();
         dto.setId(ticket.getId());
@@ -45,7 +62,7 @@ public class TicketResponseDTO {
         return dto;
     }
 
-    // Getters and Setters
+    
     public Long getId() {
         return id;
     }

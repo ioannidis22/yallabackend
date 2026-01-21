@@ -1,8 +1,7 @@
-// Admin entity for system administrators (student-style comment)
 package com.yallauni.yalla.core.model;
 
-import jakarta.persistence.*; // JPA annotations for mapping
-import jakarta.validation.constraints.*; // validation constraints
+import jakarta.persistence.*;
+import jakarta.validation.constraints.*;
 
 @Entity
 @Table(name = "admin")
@@ -28,7 +27,7 @@ public class Admin {
     @Column(nullable = false, unique = true)
     private String email;
 
-    // Typical getters and setters
+    
     public Long getId() {
         return id;
     }

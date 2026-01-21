@@ -1,9 +1,8 @@
-// Implementation of UserDetails for Spring Security (immutable, student-style comment)
 package com.yallauni.yalla.core.security;
 
-import com.yallauni.yalla.core.model.User; // user entity
+import com.yallauni.yalla.core.model.User;
 
-import org.springframework.security.core.GrantedAuthority; // Spring Security roles
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -11,7 +10,8 @@ import java.util.Collection;
 import java.util.Collections;
 
 /**
- * Immutable implementation of Spring's {@link UserDetails} for representing a user at runtime.
+ * Implementation of Spring's {@link UserDetails} for representing a
+ * user at runtime.
  */
 public final class ApplicationUserDetails implements UserDetails {
 

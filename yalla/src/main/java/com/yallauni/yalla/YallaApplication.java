@@ -1,12 +1,17 @@
 package com.yallauni.yalla;
 
-// Main Spring Boot class to launch the application
 import org.springframework.boot.SpringApplication;
-// Annotation for Spring Boot auto-configuration
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-// Annotation to enable scanning for @ConfigurationProperties classes
 import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
 
+/**
+ * Main entry point for the Yalla Uni ride-sharing app.
+ * This class bootstraps the Spring Boot application and enables
+ * component scanning and auto-configuration.
+ * 
+ * @author Yalla Uni Team
+ * @version 1.0
+ */
 @SpringBootApplication
 @ConfigurationPropertiesScan("com.yallauni.yalla.config")
 public class YallaApplication {

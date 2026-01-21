@@ -1,23 +1,22 @@
 package com.yallauni.yalla.core.model.service.impl;
 
-// Ride entity (already commented elsewhere)
 import com.yallauni.yalla.core.model.Ride;
-// User entity (already commented elsewhere)
 import com.yallauni.yalla.core.model.User;
-// Vehicle entity (already commented elsewhere)
 import com.yallauni.yalla.core.model.Vehicle;
-// Repository for ride data (already commented elsewhere)
 import com.yallauni.yalla.core.model.repository.RideRepository;
-// Ride service interface
 import com.yallauni.yalla.core.model.service.RideService;
-
-// Marks this class as a Spring service
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * Implementation of RideService.
+ * Provides business logic for ride management including creation,
+ * passenger management, and status updates.
+ * Also uses RideRepository for database interactions.
+ */
 @Service
 public class RideServiceImpl implements RideService {
     private final RideRepository rideRepository;
@@ -26,9 +25,10 @@ public class RideServiceImpl implements RideService {
         this.rideRepository = rideRepository;
     }
 
+    // Create a new ride with driver and vehicle, set defaults if needed
     @Override
     public Ride createRide(Ride ride, User driver, Vehicle vehicle) {
-        // Create a new ride with driver and vehicle, set defaults if needed
+        
         if (ride == null || driver == null || vehicle == null) {
             throw new IllegalArgumentException("Ride, driver, and vehicle must not be null");
         }
@@ -86,6 +86,7 @@ public class RideServiceImpl implements RideService {
         return rideRepository.findByStatus(status);
     }
 
+
     @Override
     public Ride updateRide(Long id, Ride rideUpdate) {
         if (id == null || rideUpdate == null)
@@ -94,7 +95,7 @@ public class RideServiceImpl implements RideService {
         Ride existing = rideRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Ride not found with id: " + id));
 
-        // Update only the provided fields, preserve driver/vehicle/passengers
+        // Update only the provided fields, preserves driver/vehicle/passengers 
         if (rideUpdate.getStartingPoint() != null) {
             existing.setStartingPoint(rideUpdate.getStartingPoint());
         }
@@ -104,8 +105,7 @@ public class RideServiceImpl implements RideService {
         if (rideUpdate.getStatus() != null) {
             existing.setStatus(rideUpdate.getStatus());
         }
-        // Driver, vehicle, and passengers remain unchanged
-
+        
         return rideRepository.save(existing);
     }
 
@@ -116,6 +116,7 @@ public class RideServiceImpl implements RideService {
         rideRepository.deleteById(id);
     }
 
+    // Adds passenger to ride if not full and not already in the ride
     @Override
     @Transactional
     public boolean addPassenger(Long rideId, User passenger) {
@@ -144,6 +145,7 @@ public class RideServiceImpl implements RideService {
         }
     }
 
+    // Removes passenger from the ride given the ride's ID.
     @Override
     @Transactional
     public boolean removePassenger(Long rideId, User passenger) {

@@ -1,8 +1,7 @@
-// Implementation of UserDetailsService for user authentication
 package com.yallauni.yalla.core.security;
 
-import com.yallauni.yalla.core.model.User; // user entity
-import com.yallauni.yalla.core.model.repository.UserRepository; // repository for user lookup
+import com.yallauni.yalla.core.model.User;
+import com.yallauni.yalla.core.model.repository.UserRepository;
 
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -10,7 +9,8 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 /**
- * Implementation of Spring's {@link UserDetailsService} for providing users to the application.
+ * Implementation of Spring's {@link UserDetailsService} for providing users to
+ * the application.
  */
 @Service
 public class ApplicationUserDetailsService implements UserDetailsService {

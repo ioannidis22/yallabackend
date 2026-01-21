@@ -6,7 +6,6 @@ import com.yallauni.yalla.core.model.service.VehicleService;
 import com.yallauni.yalla.core.model.repository.UserRepository;
 import com.yallauni.yalla.dto.vehicle.VehicleCreateDTO;
 import com.yallauni.yalla.dto.vehicle.VehicleResponseDTO;
-
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -16,6 +15,11 @@ import org.springframework.security.core.userdetails.UserDetails;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * REST controller for managing vehicles.
+ * Drivers can register, view, update, and delete their vehicles.
+ * Admins can view and manage all vehicles.
+ */
 @RestController
 @RequestMapping("/api/vehicles")
 public class VehicleController {

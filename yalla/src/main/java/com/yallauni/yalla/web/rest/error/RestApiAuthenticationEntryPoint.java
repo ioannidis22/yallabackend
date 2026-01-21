@@ -19,7 +19,8 @@ import java.util.Map;
 
 /**
  * Authentication entry point for REST API that returns JSON error responses.
- * Used to send a 401 Unauthorized response in JSON format when authentication is required.
+ * Used to send a 401 Unauthorized response in JSON format when authentication
+ * is required.
  */
 @Component
 public class RestApiAuthenticationEntryPoint implements AuthenticationEntryPoint {

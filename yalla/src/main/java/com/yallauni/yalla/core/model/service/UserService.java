@@ -2,12 +2,14 @@ package com.yallauni.yalla.core.model.service;
 
 import java.util.List;
 import java.util.Optional;
-
-// DTO for creating user (already commented elsewhere)
 import com.yallauni.yalla.dto.user.UserCreateDTO;
-// DTO for returning user data (already commented elsewhere)
 import com.yallauni.yalla.dto.user.UserResponseDTO;
 
+/**
+ * Service interface for user-related operations.
+ * Defines business logic for user registration and management.
+ * Implemented by UserServiceImpl.
+ */
 public interface UserService {
     // Register a new user
     UserResponseDTO registerUser(UserCreateDTO userDto);

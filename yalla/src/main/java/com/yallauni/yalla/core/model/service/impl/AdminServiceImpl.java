@@ -1,18 +1,18 @@
 package com.yallauni.yalla.core.model.service.impl;
 
-// Admin entity (already commented elsewhere)
 import com.yallauni.yalla.core.model.Admin;
-// Repository for admin data (already commented elsewhere)
 import com.yallauni.yalla.core.model.repository.AdminRepository;
-// Admin service interface
 import com.yallauni.yalla.core.model.service.AdminService;
-
-// Marks this class as a Spring service (already commented elsewhere)
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * Implementation of AdminService.
+ * Provides business logic for admin CRUD operations.
+ * Also uses AdminRepository for database interactions.
+ */
 @Service
 public class AdminServiceImpl implements AdminService {
     private final AdminRepository adminRepository;
@@ -23,7 +23,7 @@ public class AdminServiceImpl implements AdminService {
 
     @Override
     public Admin createAdmin(Admin admin) {
-        // Create a new admin and save
+        // Create a new admin
         return adminRepository.save(admin);
     }
 

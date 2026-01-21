@@ -1,22 +1,21 @@
 package com.yallauni.yalla.core.model.service.impl;
 
-// Review entity (already commented elsewhere)
 import com.yallauni.yalla.core.model.Review;
-// Ride entity (already commented elsewhere)
 import com.yallauni.yalla.core.model.Ride;
-// User entity (already commented elsewhere)
 import com.yallauni.yalla.core.model.User;
-// Repository for review data (already commented elsewhere)
 import com.yallauni.yalla.core.model.repository.ReviewRepository;
-// Review service interface
 import com.yallauni.yalla.core.model.service.ReviewService;
-
-// Marks this class as a Spring service (already commented elsewhere)
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * Implementation of ReviewService.
+ * Provides business logic for reviews creation and management.
+ * Validates rating ranges.
+ * Also uses ReviewRepository for database interactions.
+ */
 @Service
 public class ReviewServiceImpl implements ReviewService {
     private final ReviewRepository reviewRepository;

@@ -1,17 +1,17 @@
 package com.yallauni.yalla.core.model.repository;
 
-// Spring Data JPA base repository (already commented elsewhere)
 import org.springframework.data.jpa.repository.JpaRepository;
-
-// Review entity
 import com.yallauni.yalla.core.model.Review;
-// Ride entity (already commented elsewhere)
 import com.yallauni.yalla.core.model.Ride;
-// User entity (already commented elsewhere)
 import com.yallauni.yalla.core.model.User;
 
 import java.util.List;
 
+/**
+ * Repository interface for Review entity database operations.
+ * Extends JpaRepository to provide CRUD operations and custom queries.
+ * Used by ReviewService for review data access.
+ */
 public interface ReviewRepository extends JpaRepository<Review, Long> {
     // Find all reviews for a specific ride
     List<Review> findByRide(Ride ride);

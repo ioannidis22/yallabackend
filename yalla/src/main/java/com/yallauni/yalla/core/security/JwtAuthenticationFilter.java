@@ -1,7 +1,6 @@
-// Filter for authentication with JWT (REST API, student-style comment)
 package com.yallauni.yalla.core.security;
 
-import io.jsonwebtoken.Claims; // JWT claims
+import io.jsonwebtoken.Claims;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -66,7 +65,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             final FilterChain filterChain) throws ServletException, IOException {
         final String authorizationHeader = request.getHeader("Authorization");
 
-        // No header or not Bearer? -> Let the request continue unauthenticated.
         if (authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")) {
             filterChain.doFilter(request, response);
             return;

@@ -1,35 +1,29 @@
 package com.yallauni.yalla.controller;
 
-// Admin entity
 import com.yallauni.yalla.core.model.Admin;
 import com.yallauni.yalla.core.model.Ride;
 import com.yallauni.yalla.core.model.User;
 import com.yallauni.yalla.core.model.SupportTicket;
-// Service for admin logic
 import com.yallauni.yalla.core.model.service.AdminService;
-// Repositories for dashboard stats
 import com.yallauni.yalla.core.model.repository.UserRepository;
 import com.yallauni.yalla.core.model.repository.RideRepository;
 import com.yallauni.yalla.core.model.repository.ReviewRepository;
 import com.yallauni.yalla.core.model.repository.SupportTicketRepository;
-// DTO for creating admin
 import com.yallauni.yalla.dto.admin.AdminCreateDTO;
-// DTO for returning admin data
 import com.yallauni.yalla.dto.admin.AdminResponseDTO;
-// DTO for dashboard stats
 import com.yallauni.yalla.dto.admin.DashboardDTO;
-
-// Used for HTTP responses
 import org.springframework.http.ResponseEntity;
-// Spring REST controller annotations (already commented elsewhere)
 import org.springframework.web.bind.annotation.*;
-
-// Annotation for method-level security
 import org.springframework.security.access.prepost.PreAuthorize;
 
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * REST controller for admin operations.
+ * Provides endpoints for dashboard statistics, user management,
+ * and support ticket handling. Requires ADMIN role.
+ */
 @RestController
 @RequestMapping("/api/admins") // All endpoints in this controller start with /api/admins
 public class AdminController {
@@ -117,7 +111,7 @@ public class AdminController {
     @GetMapping
     @PreAuthorize("hasRole('ADMIN')")
     public List<AdminResponseDTO> getAllAdmins() {
-        // Return all admins as a list of DTOs
+        // Return all admins as a list.
         List<Admin> admins = adminService.findAll();
         return admins.stream().map(a -> {
             AdminResponseDTO dto = new AdminResponseDTO();
@@ -153,7 +147,7 @@ public class AdminController {
         return ResponseEntity.noContent().build();
     }
 
-    // ==================== BAN MANAGEMENT ====================
+    // ----------BAN MANAGEMENT----------
 
     // Get all banned users
     @GetMapping("/users/banned")
@@ -163,7 +157,7 @@ public class AdminController {
         return ResponseEntity.ok(bannedUsers.stream().map(this::mapUserToResponse).toList());
     }
 
-    // Check if a specific user is banned
+    // Check a specific user's ban status
     @GetMapping("/users/{userId}/ban-status")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> checkUserBanStatus(@PathVariable Long userId) {
@@ -196,7 +190,7 @@ public class AdminController {
             return ResponseEntity.badRequest().body("Cannot ban an admin user");
         }
 
-        if (user.isBanned()) {
+        if (user.isBanned()) { // Message for already banned user
             return ResponseEntity.badRequest().body("User is already banned");
         }
 

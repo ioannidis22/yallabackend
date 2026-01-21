@@ -4,6 +4,9 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import java.time.LocalDateTime;
 
+/**
+ * Entity representing a support ticket created by users.
+ */
 @Entity
 @Table(name = "support_ticket", indexes = {
         @Index(name = "idx_ticket_user", columnList = "user_id"),
@@ -12,49 +15,60 @@ import java.time.LocalDateTime;
 })
 public class SupportTicket {
 
+    // Unique identifier for the support ticket
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    // The user who created this ticket
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
+    // Subject/title of the support request
     @NotNull
     @NotBlank
     @Size(max = 255)
     @Column(nullable = false)
     private String subject;
 
+    // Detailed message describing the issue
     @NotNull
     @NotBlank
     @Size(max = 2000)
     @Column(nullable = false, length = 2000)
     private String message;
 
+    // Current status of the ticket (PENDING, IN_PROGRESS, RESOLVED, CLOSED)
     @NotNull
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 20)
     private TicketStatus status = TicketStatus.PENDING;
 
+    // Category of the support request
     @NotNull
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 30)
     private TicketCategory category = TicketCategory.GENERAL;
 
+    // Admin's response to the ticket
     @Size(max = 2000)
     @Column(name = "admin_response", length = 2000)
     private String adminResponse;
 
+    // ID of the admin who responded
     @Column(name = "responded_by")
     private Long respondedBy;
 
+    // Timestamp when ticket was created
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt = LocalDateTime.now();
 
+    // Timestamp when ticket was last updated
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
+    // Timestamp when ticket was resolved
     @Column(name = "resolved_at")
     private LocalDateTime resolvedAt;
 
@@ -75,7 +89,7 @@ public class SupportTicket {
         FEATURE_REQUEST // Feature suggestions
     }
 
-    // Getters and Setters
+    
     public Long getId() {
         return id;
     }

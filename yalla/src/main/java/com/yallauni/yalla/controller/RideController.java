@@ -15,7 +15,6 @@ import com.yallauni.yalla.dto.booking.BookingResponseDTO;
 import com.yallauni.yalla.dto.booking.BookingCreateDTO;
 import com.yallauni.yalla.dto.driver.DriverStatsDTO;
 import jakarta.validation.Valid;
-
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
@@ -29,6 +28,11 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+/**
+ * REST controller for managing rides.
+ * Provides endpoints for creating, viewing, updating, and managing rides.
+ * Includes booking functionality for passengers.
+ */
 @RestController
 @RequestMapping("/api/rides")
 @Transactional(readOnly = true)
@@ -103,7 +107,7 @@ public class RideController {
         return ResponseEntity.ok(mapToDto(saved));
     }
 
-    // Get my rides - rides where user is driver or passenger
+    // Get user's rides - rides where user is driver or passenger.
     @GetMapping("/my")
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<?> getMyRides(@AuthenticationPrincipal UserDetails userDetails) {
@@ -121,7 +125,7 @@ public class RideController {
         return ResponseEntity.ok(myRides);
     }
 
-    // Get ride by ID - only if involved or admin
+    // Get ride by ID - only if involved or admin.
     @GetMapping("/{id}")
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<?> getRideById(@PathVariable Long id, @AuthenticationPrincipal UserDetails userDetails) {
@@ -152,7 +156,7 @@ public class RideController {
         return rideService.findAll().stream().map(this::mapToDto).toList();
     }
 
-    // Update ride - only driver of ride or admin
+    // Update ride - only driver of said ride or admin
     @PutMapping("/{id}")
     @PreAuthorize("hasRole('DRIVER') or hasRole('ADMIN')")
     @Transactional
@@ -259,9 +263,10 @@ public class RideController {
         }
     }
 
-    // ==================== STATUS MANAGEMENT ====================
+    // -------------------------------RIDE STATUS MANAGEMENT -------------------------------
 
-    @PostMapping("/{id}/start")
+    // Driver/Admin starts the ride.
+    @PostMapping("/{id}/start") 
     @PreAuthorize("hasRole('DRIVER') or hasRole('ADMIN')")
     @Transactional
     public ResponseEntity<?> startRide(@PathVariable Long id, @AuthenticationPrincipal UserDetails userDetails) {
@@ -293,6 +298,7 @@ public class RideController {
         }
     }
 
+    // Driver/Admin completes the ride.
     @PostMapping("/{id}/complete")
     @PreAuthorize("hasRole('DRIVER') or hasRole('ADMIN')")
     @Transactional
@@ -325,6 +331,7 @@ public class RideController {
         }
     }
 
+    // Driver/Admin cancels the ride.
     @PostMapping("/{id}/cancel")
     @PreAuthorize("hasRole('DRIVER') or hasRole('ADMIN')")
     @Transactional
@@ -360,7 +367,7 @@ public class RideController {
         }
     }
 
-    // Get rides by status - admin only
+    // Get rides by status, admin only
     @GetMapping("/status/{status}")
     @PreAuthorize("hasRole('ADMIN')")
     public List<RideResponseDTO> getRidesByStatus(@PathVariable String status) {
@@ -372,7 +379,7 @@ public class RideController {
         }
     }
 
-    // Get my rides by status - user's own rides with specific status
+    // Get user's own rides with specific status
     @GetMapping("/my/status/{status}")
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<?> getMyRidesByStatus(@PathVariable String status,
@@ -394,7 +401,7 @@ public class RideController {
         }
     }
 
-    // Helper method to check if user is involved in a ride (driver or passenger)
+    // Method to check if user is involved in a ride (driver or passenger)
     private boolean isUserInvolved(Ride ride, User user) {
         if (ride.getDriver() != null && ride.getDriver().getUserID().equals(user.getUserID())) {
             return true;
@@ -440,7 +447,7 @@ public class RideController {
         return dto;
     }
 
-    // ==================== DRIVER SPECIFIC ENDPOINTS ====================
+    // ------------------------------- DRIVER SPECIFIC ENDPOINTS -------------------------------
 
     // Get ride with passengers (for driver to view passengers)
     @GetMapping("/{id}/passengers")
@@ -492,7 +499,7 @@ public class RideController {
         return ResponseEntity.ok(rides.stream().map(this::mapToDto).toList());
     }
 
-    // Get driver stats
+    // Get driver's stats
     @GetMapping("/driver/stats")
     @PreAuthorize("hasRole('DRIVER') or hasRole('ADMIN')")
     public ResponseEntity<?> getDriverStats(@AuthenticationPrincipal UserDetails userDetails) {
@@ -523,9 +530,9 @@ public class RideController {
         return ResponseEntity.ok(stats);
     }
 
-    // ==================== BOOKING MANAGEMENT ====================
+    // -------------------------------RIDE BOOKING MANAGEMENT -------------------------------
 
-    // Passenger requests to book a ride
+    // Passenger requests to book a ride.
     @PostMapping("/{rideId}/book")
     @PreAuthorize("isAuthenticated()")
     @Transactional
@@ -544,24 +551,24 @@ public class RideController {
 
         Ride ride = rideOpt.get();
 
-        // Check if ride is still accepting bookings
+        // Checks if ride is still accepting bookings.
         if (ride.getStatus() != Ride.RideStatus.SCHEDULED) {
             return ResponseEntity.badRequest().body("This ride is no longer accepting bookings");
         }
 
-        // Check if there are available seats
+        // Checks if there are available seats.
         if (ride.getRemainingSeats() <= 0) {
             return ResponseEntity.badRequest().body("No available seats on this ride");
         }
 
-        // Check if already booked
+        // Checks if ride is already booked by user.
         Optional<Booking> existingBooking = bookingRepository.findByRideAndPassenger(ride, passenger);
         if (existingBooking.isPresent()) {
             return ResponseEntity.badRequest()
                     .body("You already have a booking for this ride. Status: " + existingBooking.get().getStatus());
         }
 
-        // Can't book own ride
+        // Checks if user is trying to book their own ride.
         if (ride.getDriver().getUserID().equals(passenger.getUserID())) {
             return ResponseEntity.badRequest().body("You cannot book your own ride");
         }
@@ -787,7 +794,7 @@ public class RideController {
         return dto;
     }
 
-    // ==================== PASSENGER SEARCH & FILTER ENDPOINTS ====================
+    // ----------------- PASSENGER SEARCH & FILTER ENDPOINTS -------------------
 
     // Search for available rides with filters
     @GetMapping("/search")
@@ -863,7 +870,7 @@ public class RideController {
         return ResponseEntity.ok(availableRides);
     }
 
-    // Filter rides by destination only (simpler endpoint)
+    // Filter rides by destination only.
     @GetMapping("/filter/destination/{destination}")
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<?> filterByDestination(@PathVariable String destination,
@@ -905,9 +912,11 @@ public class RideController {
         return ResponseEntity.ok(availableRides);
     }
 
-    // ==================== PASSENGER BOOKING HISTORY ====================
+    // -------------------------- PASSENGER BOOKING HISTORY --------------------------
 
-    // Get past bookings (accepted bookings for completed rides)
+
+
+    // Get booking history (accepted bookings for completed rides)
     @GetMapping("/my/bookings/history")
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<?> getPastBookings(@AuthenticationPrincipal UserDetails userDetails) {
@@ -1007,7 +1016,7 @@ public class RideController {
         return ResponseEntity.ok(trackingInfo);
     }
 
-    // Get passenger's ride history (rides they completed as passenger)
+    // Get passenger's ride history (rides they completed as a passenger)
     @GetMapping("/passenger/history")
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<?> getPassengerRideHistory(

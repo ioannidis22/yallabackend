@@ -1,4 +1,3 @@
-// Service for sending emails (student-style comment)
 package com.yallauni.yalla.core.service;
 
 import org.slf4j.Logger;
@@ -65,11 +64,11 @@ public class EmailService {
                 LOGGER.error("Failed to send password reset email to: {}", toEmail, e);
             }
         } else {
-            // Log the code for development/testing
-            LOGGER.info("=== PASSWORD RESET CODE (email disabled) ===");
+            
+            LOGGER.info("PASSWORD RESET CODE");
             LOGGER.info("Email: {}", toEmail);
             LOGGER.info("Reset Code: {}", resetCode);
-            LOGGER.info("=============================================");
+            
         }
     }
 }

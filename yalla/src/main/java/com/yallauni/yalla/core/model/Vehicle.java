@@ -1,8 +1,7 @@
-// Vehicle entity for user cars (student-style comment)
 package com.yallauni.yalla.core.model;
 
-import jakarta.persistence.*; // JPA annotations
-import jakarta.validation.constraints.*; // validation constraints
+import jakarta.persistence.*;
+import jakarta.validation.constraints.*;
 
 @Entity
 @Table(name = "vehicle", indexes = {
@@ -10,7 +9,7 @@ import jakarta.validation.constraints.*; // validation constraints
         @Index(name = "idx_vehicle_model", columnList = "model")
 })
 public class Vehicle {
-    @Id 
+    @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "car_id")
     private Long carId;
@@ -44,7 +43,7 @@ public class Vehicle {
     @JoinColumn(name = "driver_id", referencedColumnName = "id", nullable = false, unique = true)
     private User driver;
 
-    // Typical getters and setters
+    
     public Long getCarId() {
         return carId;
     }

@@ -1,18 +1,37 @@
 package com.yallauni.yalla.dto.booking;
 
+/**
+ * Data Transfer Object for returning booking information in API responses.
+ * Contains detailed information about a booking including ride and passenger
+ * details.
+ * Used by controllers to send booking data to clients.
+ */
 public class BookingResponseDTO {
+    /** Unique identifier of the booking */
     private Long id;
+    /** ID of the ride associated with this booking */
     private Long rideId;
+    /** Starting location of the ride */
     private String rideStartingPoint;
+    /** Destination of the ride */
     private String rideDestination;
+    /** Scheduled departure time of the ride */
     private String rideDepartureTime;
+    /** Current status of the ride (e.g., SCHEDULED, IN_PROGRESS, COMPLETED) */
     private String rideStatus;
+    /** ID of the passenger who made the booking */
     private Long passengerId;
+    /** Full name of the passenger */
     private String passengerName;
+    /** Email address of the passenger */
     private String passengerEmail;
+    /** Current status of the booking (PENDING, ACCEPTED, REJECTED, CANCELLED) */
     private String status;
+    /** Timestamp when the booking was created */
     private String createdAt;
+    /** Message sent by the passenger when creating the booking */
     private String passengerMessage;
+    /** Response message from the driver (if any) */
     private String driverResponse;
 
     public Long getId() {

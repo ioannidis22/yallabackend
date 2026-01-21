@@ -5,7 +5,6 @@ import com.yallauni.yalla.core.model.repository.UserRepository;
 import com.yallauni.yalla.core.model.service.UserService;
 import com.yallauni.yalla.dto.user.UserCreateDTO;
 import com.yallauni.yalla.dto.user.UserResponseDTO;
-
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -15,6 +14,11 @@ import org.springframework.security.core.userdetails.UserDetails;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * REST controller for managing users.
+ * Provides endpoints for registration, profile viewing, and user management.
+ * Users can only access their own data unless they are admins.
+ */
 @RestController
 @RequestMapping("/api/users")
 public class UserController {

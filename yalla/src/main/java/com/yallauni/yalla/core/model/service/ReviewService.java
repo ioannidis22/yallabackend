@@ -2,14 +2,15 @@ package com.yallauni.yalla.core.model.service;
 
 import java.util.List;
 import java.util.Optional;
-
-// Review entity (already commented elsewhere)
 import com.yallauni.yalla.core.model.Review;
-// Ride entity (already commented elsewhere)
 import com.yallauni.yalla.core.model.Ride;
-// User entity (already commented elsewhere)
 import com.yallauni.yalla.core.model.User;
 
+/**
+ * Service interface for review operations.
+ * Defines business logic for creating and managing ride reviews.
+ * Implemented by ReviewServiceImpl.
+ */
 public interface ReviewService {
     // Add a new review for a ride and reviewer
     Review addReview(Review review, Ride ride, User reviewer);

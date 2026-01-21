@@ -1,12 +1,11 @@
-// Service for issuing and parsing JWT tokens
 package com.yallauni.yalla.core.security;
 
-import io.jsonwebtoken.Claims; // JWT claims
+import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
 
-import org.springframework.beans.factory.annotation.Value; // inject properties
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.nio.charset.StandardCharsets;
@@ -17,7 +16,7 @@ import java.util.Collection;
 import java.util.Date;
 
 /**
- * JWT (JSON Web Token) service for issuing and parsing tokens.
+ * JWT service for issuing and parsing tokens.
  */
 @Service
 public class JwtService {
@@ -78,9 +77,6 @@ public class JwtService {
                 .getBody();
     }
 
-    /**
-     * Extracts the subject (username) from a token.
-     */
     public String extractSubject(final String token) {
         return parse(token).getSubject();
     }

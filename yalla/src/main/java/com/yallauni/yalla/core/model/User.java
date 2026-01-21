@@ -1,11 +1,10 @@
-// User entity for application users
 package com.yallauni.yalla.core.model;
 
-import com.fasterxml.jackson.annotation.JsonProperty; // for serialization control
-import jakarta.persistence.*; // JPA annotations
-import jakarta.validation.constraints.*; // validation constraints
-import java.util.List; // list for relationships
-import java.util.Objects; // for equals/hashCode
+import com.fasterxml.jackson.annotation.JsonProperty;
+import jakarta.persistence.*;
+import jakarta.validation.constraints.*;
+import java.util.List;
+import java.util.Objects;
 
 @Entity
 @Table(name = "app_user", uniqueConstraints = {
@@ -95,7 +94,7 @@ public class User {
 
     private List<String> preferences;
 
-    // Typical getters and setters
+    
     public Long getUserID() {
         return userID;
     }

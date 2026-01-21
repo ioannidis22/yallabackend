@@ -1,20 +1,19 @@
 package com.yallauni.yalla.core.model.service.impl;
 
-// User entity (already commented elsewhere)
 import com.yallauni.yalla.core.model.User;
-// Vehicle entity (already commented elsewhere)
 import com.yallauni.yalla.core.model.Vehicle;
-// Repository for vehicle data (already commented elsewhere)
 import com.yallauni.yalla.core.model.repository.VehicleRepository;
-// Vehicle service interface
 import com.yallauni.yalla.core.model.service.VehicleService;
-
-// Marks this class as a Spring service (already commented elsewhere)
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * Implementation of VehicleService.
+ * Provides business logic for vehicle registration and management.
+ * Uses VehicleRepository for database interactions.
+ */
 @Service
 public class VehicleServiceImpl implements VehicleService {
     private final VehicleRepository vehicleRepository;
@@ -70,7 +69,6 @@ public class VehicleServiceImpl implements VehicleService {
         if (vehicleUpdate.getCapacity() > 0) {
             existing.setCapacity(vehicleUpdate.getCapacity());
         }
-        // Driver is NOT updated - it stays the same as before
 
         return vehicleRepository.save(existing);
     }

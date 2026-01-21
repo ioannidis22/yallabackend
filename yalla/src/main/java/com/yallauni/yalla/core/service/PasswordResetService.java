@@ -1,4 +1,3 @@
-// Service for handling password reset operations (student-style comment)
 package com.yallauni.yalla.core.service;
 
 import com.yallauni.yalla.core.model.PasswordResetToken;
@@ -61,25 +60,25 @@ public class PasswordResetService {
 
         final Optional<User> userOpt = userRepository.findByEmailAddress(email.trim().toLowerCase());
         if (userOpt.isEmpty()) {
-            // Don't reveal if email exists - return true anyway for security
+            // Don't reveal if email exists, returns true anyway.
             LOGGER.info("Password reset requested for non-existent email: {}", email);
             return true;
         }
 
         final User user = userOpt.get();
 
-        // Delete any existing tokens for this user
+        // Deletes any existing tokens for this user.
         tokenRepository.deleteByUser(user);
 
-        // Generate a 6-digit numeric code (easy to type on mobile)
+        // Generates a 6-digit numeric code.
         final String resetCode = generateResetCode();
 
-        // Create token with expiration
+        // Creates token with expiration.
         final Instant expiresAt = Instant.now().plus(tokenValidityMinutes, ChronoUnit.MINUTES);
         final PasswordResetToken token = new PasswordResetToken(resetCode, user, expiresAt);
         tokenRepository.save(token);
 
-        // Send email with reset code
+        // Sends email with reset code.
         emailService.sendPasswordResetEmail(user.getEmailAddress(), user.getFirstName(), resetCode);
 
         LOGGER.info("Password reset token generated for user: {}", email);
@@ -152,7 +151,7 @@ public class PasswordResetService {
     }
 
     /**
-     * Generates a 6-digit numeric reset code.
+     * Generates a 6-digit reset code.
      */
     private String generateResetCode() {
         int code = SECURE_RANDOM.nextInt(900000) + 100000; // 100000-999999

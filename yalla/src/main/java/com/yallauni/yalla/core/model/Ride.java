@@ -1,9 +1,8 @@
-// Ride entity for each trip
 package com.yallauni.yalla.core.model;
 
-import jakarta.persistence.*; // JPA annotations
-import jakarta.validation.constraints.*; // validation constraints
-import java.util.List; // lists for relationships
+import jakarta.persistence.*;
+import jakarta.validation.constraints.*;
+import java.util.List;
 
 @Entity
 @Table(name = "ride", indexes = {
@@ -61,7 +60,7 @@ public class Ride {
     @Column(name = "driver_notes")
     private String driverNotes;
 
-    // Getters and setters
+    
     public Long getRideId() {
         return rideId;
     }
@@ -102,7 +101,7 @@ public class Ride {
         this.reviews = reviews;
     }
 
-    // Utility method to check if adding a passenger exceeds vehicle capacity.
+    // Method to check if adding a passenger exceeds vehicle capacity.
     public boolean canAddPassenger() {
         if (vehicle == null)
             return false;

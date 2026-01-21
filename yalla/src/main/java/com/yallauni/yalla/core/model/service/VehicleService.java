@@ -2,28 +2,30 @@ package com.yallauni.yalla.core.model.service;
 
 import java.util.List;
 import java.util.Optional;
-
-// User entity (already commented elsewhere)
 import com.yallauni.yalla.core.model.User;
-// Vehicle entity (already commented elsewhere)
 import com.yallauni.yalla.core.model.Vehicle;
 
+/**
+ * Service interface for vehicle-related operations.
+ * Defines business logic for registering and managing driver vehicles.
+ * Implemented by VehicleServiceImpl.
+ */
 public interface VehicleService {
-    // Register a new vehicle for a driver
+    // Registers a new vehicle for a driver
     Vehicle registerVehicle(Vehicle vehicle, User driver);
 
-    // Find vehicle by id
+    // Finds vehicle by id
     Optional<Vehicle> findById(Long id);
 
-    // Find all vehicles for a specific driver
+    // Finds all vehicles for a specific driver
     List<Vehicle> findByDriver(User driver);
 
-    // Return all vehicles
+    // Returns all vehicles
     List<Vehicle> findAll();
 
-    // Update vehicle fields
+    // Updates vehicle fields
     Vehicle updateVehicle(Long id, Vehicle vehicle);
 
-    // Delete vehicle by id
+    // Deletes vehicle by id
     void deleteVehicle(Long id);
 }

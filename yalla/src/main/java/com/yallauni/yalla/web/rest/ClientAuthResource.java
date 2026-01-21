@@ -41,6 +41,7 @@ public class ClientAuthResource {
 
     /**
      * Authenticates an API client and returns a JWT token.
+     * 
      * @param request The client credentials
      * @return JWT token response if authentication is successful
      * @throws ResponseStatusException if credentials are invalid
